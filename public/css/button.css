@@ -1,0 +1,44 @@
+/* UNIVERSAL BUTTON */
+
+@keyframes onHoverEffect {
+  0% { padding: 7px 12px; margin: 2px 6px; }
+  50% { padding: 7px 17px; margin: 2px 1px; }
+  100% { padding: 7px 12px; margin: 2px 6px; }
+}
+a.button {
+  display: inline-block;
+  background: #963059;
+  background-attachment: local;
+  padding: 7px 15px;
+  min-width: 170px;
+  text-align: center;
+  border-radius: 3px;
+  transition: .3s;
+  animation: onHoverEffect 0.6s ease infinite;
+  animation-play-state: paused;
+  margin: 3px;
+}
+a.button:hover {
+  background: #AD3768;
+  cursor: pointer;
+  animation-play-state: running;
+}
+a.centered {
+  display: block;
+  width: 170px;
+  margin: auto;
+}
+
+
+/* HEADER BUTTON */
+
+header a.button {
+  display: inline-block;
+  font-size: .9em;
+  min-width: 100px;
+  animation: none;
+  padding: 1px 3px;
+  margin: 0px;
+  margin-left: 1px;
+  border-radius: 1px;
+}

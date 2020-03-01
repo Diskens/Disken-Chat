@@ -1,0 +1,33 @@
+/* Header styles */
+@keyframes slideInEffect {
+  0%   {transform: translateY(-100px);}
+  50%  {transform: translateY(-20px);}
+  100% {transform: translateY(0);}
+}
+header {
+  background: #111;
+  padding: 6px;
+  font-size: 1em;
+  animation: slideInEffect .75s ease-out;
+  text-align: left;
+}
+
+header input[type='text'], input[type='password'] {
+  display: inline-block;
+  font-size: .94em;
+  border-radius: 1px;
+  margin: 0px 0px 1px;
+  padding: 1px 0px;
+  text-align: center;
+  border: 0px;
+  background-color: #555;
+  color: #FFF;
+}
+
+a.b_right {
+  float: right;
+}
+
+#Welcome {
+  margin: 0px 10px;
+}
