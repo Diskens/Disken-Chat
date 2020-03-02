@@ -16,6 +16,7 @@ function Re_CookieLogin(data) {
     if ($PLAYER.inGame) API_RestoreGame($PLAYER.username, $SOCKET.id);
   }
   autoSwitchHeader();
+  autoSwitchPlayButton();
 }
 $SOCKET.on('Re_CookieLogin', Re_CookieLogin);
 
@@ -36,6 +37,7 @@ function Re_Login(data) {
   setCookie('SessionID', $SOCKET.id);
   $id('Welcome').innerText = `Welcome ${$PLAYER.username}!`;
   autoSwitchHeader();
+  autoSwitchPlayButton();
 }
 $SOCKET.on('Re_Login', Re_Login);
 
@@ -57,6 +59,10 @@ $SOCKET.on('Re_Signup', Re_Signup);
 // Logout
 function API_Logout(username, password) {
   const data = {username};
+  if ($PLAYER.inGame) {
+    $GAME.chat.clearHistory();
+    $GAME.slotsDom.removeAll();
+  }
   $LOGGEDIN = false;
   $PLAYER = undefined;
   console.log('Sending "Logout"', data);
@@ -65,6 +71,7 @@ function API_Logout(username, password) {
   popupMessage('Logged out');
   switchSection('home');
   autoSwitchHeader();
+  autoSwitchPlayButton();
   setCookie('Username', '');
   setCookie('SessionID', '');
 }

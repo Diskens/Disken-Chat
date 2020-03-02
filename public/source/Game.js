@@ -1,63 +1,58 @@
-const lobbyDomIDs = {
-  chatInput: 'ChatInput',
-  chatContent: 'ChatContent',
+const lobbyDomElements = {
   lobbyGameID: 'LobbyGameID',
+  lobbyMapName: 'LobbyMapName',
   readyButton: 'LobbyReadyButton',
-  lobbyMapName: 'LobbyMapName'
+  lobbyPlayerSlots: 'LobbyPlayerSlots'
 }
 
 class Game {
   constructor(data) {
     this.ID = data.ID;
     this.players = data.players;
+    this.maxPlayers = data.maxPlayers;
     this.mapID = data.mapID;
-    this.dom = {};
     this.initialized = false;
+    this.chat = new Chat();
+    this.slotsDom = new SlotsDom(lobbyDomElements.lobbyPlayerSlots,
+      this.maxPlayers, this.players);
   }
-  attachLobbyContent() {
-    $id(lobbyDomIDs.lobbyGameID).innerText = `${$GAME.ID}`;
-    $id(lobbyDomIDs.lobbyMapName).innerText = $GAME.mapID;
-    $id(lobbyDomIDs.readyButton).onclick = $GAME.toggleReady;
-    var chatInput = $id(lobbyDomIDs.chatInput)
-    chatInput.addEventListener('keyup', $GAME.chatSend);
-    var chatContent = $id(lobbyDomIDs.chatContent);
-    chatContent.onclick = function(evt) {chatContent.focus()};
-    chatContent.scrollTop = chatContent.scrollHeight;
-    removeChildren(chatContent); // clear chat history
+  onStatusUpdate(data) {
+    // TODO: This code has to be refactored
+    if (data.type == 'join') {
+      this.players.push(data.username);
+      this.slotsDom.removeEmptySlot();
+      this.slotsDom.addPlayerSlot(data.username);
+      this.chat.announce(`${data.username} joined the lobby`);
+    } else if (data.type == 'leave') {
+      this.players.splice(this.players.indexOf(data.username), 1);
+      this.slotsDom.removePlayerSlot(data.username);
+      this.slotsDom.addEmptySlot();
+      this.chat.announce(`${data.username} has left the lobby`);
+    } else if (data.type == 'kickout') {
+      this.players.splice(this.players.indexOf(data.username), 1);
+      this.slotsDom.removePlayerSlot(data.username);
+      this.slotsDom.addEmptySlot();
+      this.chat.announce(`${data.username} was kicked out of the lobby`);
+    } else if (data.type == 'disconnect') {
+      this.chat.announce(`${data.username} has disconnected. ` +
+        `Player that does not reconnect in 5 seconds is kicked out.`);
+    } else if (data.type == 'reconnect') {
+      this.chat.announce(`${data.username} reconnected`);
+    } else if (data.type == 'ready') {
+      this.slotsDom.setSlotReadyStatus(data.username, data.details.status);
+    }
   }
-  chatSend(evt) {
-    if (evt.key != 'Enter') return;
-    var target = evt.target;
-    if (target.value == '') return;
-    API_ChatMessage($SOCKET.id, $PLAYER.username, $GAME.ID, target.value);
-    target.value = '';
-  }
-  createChatElement(cssClass, text) {
-    var time = new Date(Date.now());
-    var timeElm = document.createElement('span');
-    timeElm.innerText = formatTime(time)
-    timeElm.classList.add('chatTime');
-    var textElm = document.createElement('span');
-    textElm.innerText = text;
-    var mainElm = document.createElement('div');
-    mainElm.appendChild(timeElm);
-    mainElm.appendChild(textElm);
-    mainElm.classList.add('chatEntry');
-    mainElm.classList.add(cssClass);
-    var container = $id(lobbyDomIDs.chatContent);
-    container.appendChild(mainElm);
-    container.scrollTop = container.scrollHeight;
-  }
-  onNewMessage(player, text) {
-    $GAME.createChatElement('message', `${player}: ${text}`);
-  }
-  onNewAnnouncement(type, text) {
-    $GAME.createChatElement('announcement', text);
+  attachLobbyDOM() {
+    this.chat.attachLobbyDOM();
+    $id(lobbyDomElements.lobbyGameID).innerText = `${$GAME.ID}`;
+    $id(lobbyDomElements.lobbyMapName).innerText = $GAME.mapID;
+    $id(lobbyDomElements.readyButton).onclick = $GAME.toggleReady;
   }
   toggleReady(evt) {
     $PLAYER.isReady = !$PLAYER.isReady;
-    $id(lobbyDomIDs.readyButton).innerText = $PLAYER.isReady? 'Ready' : 'Unready';
-    API_SetReadyStatus($SOCKET.id, $PLAYER.username, $GAME.ID, $PLAYER.isReady);
+    $id(lobbyDomElements.readyButton).innerText = $PLAYER.isReady? 'Uneady' : 'Ready';
+    $GAME.slotsDom.setSlotReadyStatus($PLAYER.username, $PLAYER.isReady);
+    API_StatusUpdate($SOCKET.id, $PLAYER.username, $GAME.ID, $PLAYER.isReady);
   }
 }
 

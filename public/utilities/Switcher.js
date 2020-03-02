@@ -53,10 +53,25 @@ function switchSection(sectionName) {
   if (!domSections[sectionName].show()) switchSection('home');
 }
 
-
 function autoSwitchHeader() {
   $id('LoggedOutHeader').hidden = $LOGGEDIN;
   $id('LoggedInHeader').hidden = !$LOGGEDIN;
   if ($PLAYER != undefined)
     $id('adminHeader').hidden = $PLAYER.permissions? false : true;
+}
+
+function autoSwitchPlayButton() {
+  var button = $id('PlayButton');
+  if ($PLAYER == undefined) {
+    button.onclick = () => {popupMessage('You have to be logged in to play');};
+    button.innerText = 'Play';
+  } else {
+    if ($PLAYER.inGame) {
+      button.onclick = () => {switchSection('lobby');};
+      button.innerText = 'Return to lobby';
+    } else {
+      button.onclick = () => {switchSection('lobbiesList');};
+      button.innerText = 'Play';
+    }
+  }
 }

@@ -9,10 +9,6 @@ function onLeaveLobby() {
   API_LeaveLobby($PLAYER.username, $GAME.ID);
 }
 
-// Section lobby
-function onLobbyJoin() {
-  $GAME.attachLobbyContent();
-}
 
 // Section lobbies list
 function onShowLobbies() {

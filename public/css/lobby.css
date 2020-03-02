@@ -1,3 +1,7 @@
+p.property {
+  font-weight: bold;
+}
+
 #SectionLobby .content {
   float: right;
   box-sizing: border-box;
@@ -10,6 +14,21 @@
     width: calc(50% - 8px);
   }
 }
+
+
+/* PLAYER SLOTS */
+.playerSlot {
+  /**/
+}
+.empty {
+  opacity: .5;
+}
+.ready {
+  /**/
+}
+
+
+/* CHAT */
 
 #ChatContent {
   box-sizing: border-box;
@@ -25,7 +44,6 @@
   overflow-y: scroll;
   text-align: left;
 }
-
 #ChatInput {
   box-sizing: border-box;
   width: 100%;
@@ -34,17 +52,14 @@
   font-family: inherit;
   font-size: inherit;
 }
-
 #ChatInput, #ChatContent, #LobbyControls, #LobbyInfo {
   background: #1E1E1E80;
   color: #FFF;
 }
-
 .chatTime {
   color: #FFF7;
   margin-right: 7px;
 }
-
 .chatEntry {
   word-wrap: break-word;
   padding: 4px;
@@ -56,9 +71,4 @@
 }
 .announcement {
   background: #4444;
-}
-
-
-p.property {
-  font-weight: bold;
 }

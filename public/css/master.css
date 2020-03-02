@@ -15,7 +15,7 @@ html, body {
   background-attachment: fixed;
   background-position: center;
   color: #FFF;
-  font-family: 'Lato', 'Verdana';
+  font-family: 'Lato', 'Verdana', sans-serif;
   text-align: center;
   font-size: 1.05em;
   animation: bodyBackgroundAnimation 4.5s ease infinite;

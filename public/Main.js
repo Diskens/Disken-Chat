@@ -14,11 +14,11 @@ function onload() {
   // Handle DOM sections and headers
   domSections = {
     home: new DomSection('SectionHome', new Permissions(0, 1)),
-    about: new DomSection('SectionAbout', new Permissions(0, 0)),
-    account: new DomSection('SectionAccount', new Permissions(1, 0), onSwitchAccount),
+    about: new DomSection('SectionAbout', new Permissions(0, 1)),
+    account: new DomSection('SectionAccount', new Permissions(1, 1), onSwitchAccount),
     lobbiesList: new DomSection('SectionListing', new Permissions(1, 0), onShowLobbies),
-    lobby: new DomSection('SectionLobby', new Permissions(1, 2), onLobbyJoin),
-    admin: new DomSection('SectionAdmin', new Permissions(2, 0))
+    lobby: new DomSection('SectionLobby', new Permissions(1, 2)),
+    admin: new DomSection('SectionAdmin', new Permissions(2, 1))
   };
   $SECTION = getCookie('Section');
   if ($SECTION == undefined) $SECTION = 'home';
@@ -35,6 +35,7 @@ function loginWithCookie() {
   var sessionID = getCookie('SessionID');
   if (username == undefined || sessionID == undefined) {
     autoSwitchHeader();
+    autoSwitchPlayButton();
     return;
   }
   API_CookieLogin(username, sessionID);

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>Swarm Conquest</title>
     <link rel="icon" type="image/png" href="favicon.ico"/>
-    <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+    <!-- <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'> -->
     <link rel="stylesheet" href="css/master.css">
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/button.css">
@@ -21,18 +21,20 @@
     <script src="accounts/Dom.js" charset="utf-8"></script>
     <script src="games/API.js" charset="utf-8"></script>
     <script src="games/Dom.js" charset="utf-8"></script>
+    <script src="source/Chat.js" charset="utf-8"></script>
+    <script src="source/SlotsDom.js" charset="utf-8"></script>
     <script src="source/Game.js" charset="utf-8"></script>
   </head>
   <body onload="onload()">
     <header id="LoggedOutHeader" hidden=true>
       <input type="text" id="Username" placeholder="Username"/>
       <input type="password" id="Password" placeholder="Password"/>
-      <a class="button" onclick="signupOnclick()"> Signup </a>
+      <a class="button" onclick="signupOnclick()"> Sign up </a>
       <a class="button" onclick="loginOnclick()"> Login </a>
     </header>
     <header id="LoggedInHeader" hidden=true>
       <span id="Welcome"></span>
-      <a class="button" onclick="logoutOnclick()"> Logout </a>
+      <a class="button" onclick="logoutOnclick()"> Log out </a>
       <a class="button" onclick="switchSection('account')"> Account </a>
       <span id="adminHeader">
         <a class="button" onclick="switchSection('admin')"> Admin </a>
@@ -42,7 +44,7 @@
       <section id="SectionHome" hidden=true>
         <h1>Swarm Conquest</h1>
         <p> Node.js real-time multiplayer game </p>
-        <div><a class="button" onclick="switchSection('lobbiesList')"> Matchmaking </a></div>
+        <div><a class="button" id="PlayButton"> - </a></div>
         <div><a class="button" onclick="switchSection('about')"> About </a></div>
         <div id="Version"></div>
       </section>
@@ -81,7 +83,8 @@
           <input type="text" id="ChatInput" placeholder="Type your message here. Enter to send." />
         </div>
         <div class="clear"> </div>
-        <div> <a class="button" onclick="onLeaveLobby()"> Leave </a></div>
+        <div><a class="button" onclick="switchSection('home')"> Minimise </a></div>
+        <div><a class="button" onclick="onLeaveLobby()"> Leave </a></div>
       </section>
       <section id="SectionAdmin" hidden=true>
         <h3>Admin Panel</h3>

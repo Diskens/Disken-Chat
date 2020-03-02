@@ -1,3 +1,6 @@
+/* --------------------------------
+/ Matchmaking
+/ -------------------------------- */
 
 // Get all in-lobby games
 function API_GetAvailableGames() {
@@ -33,11 +36,13 @@ function Re_RestoreGame(data) {
   console.log('Received "Re_RestoreGame"', data);
   if (data.success) {
     $GAME = new Game(data.game);
+    $GAME.attachLobbyDOM();
+    autoSwitchPlayButton();
     switchSection('lobby');
   } else {
     popupError(data.reason);
     $PLAYER = data.player;
-    return; }
+  }
 }
 $SOCKET.on('Re_RestoreGame', Re_RestoreGame);
 
@@ -50,33 +55,13 @@ function API_JoinLobby(username, gameID) {
 function Re_JoinLobby(data) {
   console.log('Received "Re_JoinLobby"', data);
   if (!data.success) { popupError(data.reason); return; }
-  $GAME = new Game(data.game);
   $PLAYER = data.player;
+  $GAME = new Game(data.game);
+  $GAME.attachLobbyDOM();
   switchSection('lobby');
+  autoSwitchPlayButton();
 }
 $SOCKET.on('Re_JoinLobby', Re_JoinLobby);
-
-
-// Chat messages
-function API_ChatMessage(sessionID, username, gameID, text) {
-  $SOCKET.emit('ChatMessage', {sessionID, username, gameID, text});
-}
-function Re_ChatMessage(data) {
-  console.log(`[Chat] ${data.username}: ${data.text}`);
-  $GAME.onNewMessage(data.username, data.text);
-}
-$SOCKET.on('Re_ChatMessage', Re_ChatMessage);
-
-
-// Chat announcements (join, leave etc)
-function API_ChatAnnouncement(gameID, username, type) {
-  $SOCKET.emit('ChatAnnouncement', {gameID, username, type});
-}
-function Re_ChatAnnouncement(data) {
-  console.log(`[Chat] New announcement`, data);
-  $GAME.onNewAnnouncement(data.type, data.text);
-}
-$SOCKET.on('Re_ChatAnnouncement', Re_ChatAnnouncement);
 
 
 // Leave game
@@ -86,8 +71,37 @@ function API_LeaveLobby(username, gameID) {
 }
 function Re_LeaveLobby(data) {
   console.log('Received "Re_LeaveLobby"', data);
+  $GAME.chat.clearHistory();
+  $GAME.slotsDom.removeAll();
   $GAME = null;
   $PLAYER.inGame = false;
+  autoSwitchPlayButton();
   switchSection('home');
 }
 $SOCKET.on('Re_LeaveLobby', Re_LeaveLobby);
+
+
+// Players state updates
+function API_StatusUpdate(what, data) {
+  $SOCKET.emit('StatusUpdate', {
+    sessionID:$SOCKET.id, username:$PLAYER.username, game:$GAME.ID, what, data});
+}
+function Re_StatusUpdate(data) {
+  $GAME.onStatusUpdate(data);
+}
+$SOCKET.on('Re_StatusUpdate', Re_StatusUpdate);
+
+
+/* --------------------------------
+/ Chat
+/ -------------------------------- */
+
+// Chat messages
+function API_ChatMessage(sessionID, username, gameID, text) {
+  $SOCKET.emit('ChatMessage', {sessionID, username, gameID, text});
+}
+function Re_ChatMessage(data) {
+  console.log(`[Chat] ${data.username}: ${data.text}`);
+  $GAME.chat.newMessage(data.username, data.text);
+}
+$SOCKET.on('Re_ChatMessage', Re_ChatMessage);
