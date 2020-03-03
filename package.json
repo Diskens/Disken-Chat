@@ -1,13 +1,13 @@
 {
-  "name": "swarmconquest",
+  "name": "diskenchat",
   "version": "0.1.0",
-  "description": "Node.JS multiplayer game",
+  "description": "Node.js room-based chat app",
   "main": "server/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "game"
+    "chat"
   ],
   "author": "Jakub21",
   "license": "MIT",

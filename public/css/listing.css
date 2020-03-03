@@ -1,5 +1,5 @@
 
-div.game {
+div.room {
   font-size: .9em;
   text-align: left;
   margin: 8px 4px;
@@ -13,44 +13,44 @@ div.game {
   float: left;
   box-sizing: border-box;
 }
-div.game:hover {
+div.room:hover {
   opacity: 1;
 }
 
 @media only screen and (max-width: 1900px) {
-  div.game { width: calc(25% - 8px); }
+  div.room { width: calc(25% - 8px); }
 }
 @media only screen and (max-width: 1500px) {
-  div.game { width: calc(33% - 8px); }
+  div.room { width: calc(33% - 8px); }
 }
 @media only screen and (max-width: 1100px) {
-  div.game { width: calc(50% - 8px); }
+  div.room { width: calc(50% - 8px); }
 }
 @media only screen and (max-width: 850px) {
-  div.game { width: calc(100% - 8px); }
+  div.room { width: calc(100% - 8px); }
 }
 
-div.game div.left {
+div.room div.left {
   float: left;
   padding-bottom: 3px;
 }
-div.game div.right {
+div.room div.right {
   float: right;
   opacity: .45;
   font-size: .85em;
 }
 
-div.game td {
+div.room td {
   padding: 3px 10px;
 }
-div.game p {
+div.room p {
   width: calc(170px + 19px + 19px);
   margin: auto;
 }
-div.game a {
+div.room a {
   width: 170px;
   background: #3D1433;
 }
-div.game a:hover {
+div.room a:hover {
   background: #60004A;
 }

@@ -20,10 +20,10 @@ class DomSection {
 }
 
 class Permissions {
-  constructor(user=0, inGame=1) {
-    if (inGame==2 && !user) user = 1;
+  constructor(user=0, inRoom=1) {
+    if (inRoom==2 && !user) user = 1;
     this.user = user; // 0 = anyone, 1 = user, 2 = admin
-    this.inGame = inGame; // 0 = only false, 1 = any, 2 = only true
+    this.inRoom = inRoom; // 0 = only false, 1 = any, 2 = only true
     this.lastDenyReason = null;
   }
   get() {
@@ -31,12 +31,12 @@ class Permissions {
     if (!this.user) return true;
     if (!$LOGGEDIN) {
       this.lastDenyReason = 'notlogged'; return false;} // user is not 0 so $LOGGEDIN must be true
-    if (this.user == 2 && !$PLAYER.permissions) {
+    if (this.user == 2 && !$USER.permissions) {
       this.lastDenyReason = 'notadmin'; return false;}
-    if (this.inGame == 2 && !$PLAYER.inGame) {
-      this.lastDenyReason = 'notingame'; return false;}
-    if (!this.inGame && $PLAYER.inGame) {
-      this.lastDenyReason = 'ingame'; return false;}
+    if (this.inRoom == 2 && !$USER.inRoom) {
+      this.lastDenyReason = 'notinRoom'; return false;}
+    if (!this.inRoom && $USER.inRoom) {
+      this.lastDenyReason = 'inRoom'; return false;}
     return true;
   }
 }
@@ -46,7 +46,6 @@ function hideAllSections() {
 }
 
 function switchSection(sectionName) {
-  console.warn('[Switch] Switching to', sectionName);
   $SECTION = sectionName;
   setCookie('Section', sectionName);
   hideAllSections();
@@ -56,22 +55,22 @@ function switchSection(sectionName) {
 function autoSwitchHeader() {
   $id('LoggedOutHeader').hidden = $LOGGEDIN;
   $id('LoggedInHeader').hidden = !$LOGGEDIN;
-  if ($PLAYER != undefined)
-    $id('adminHeader').hidden = $PLAYER.permissions? false : true;
+  if ($USER != undefined)
+    $id('adminHeader').hidden = $USER.permissions? false : true;
 }
 
 function autoSwitchPlayButton() {
   var button = $id('PlayButton');
-  if ($PLAYER == undefined) {
+  if ($USER == undefined) {
     button.onclick = () => {popupMessage('You have to be logged in to play');};
-    button.innerText = 'Play';
+    button.innerText = 'Rooms';
   } else {
-    if ($PLAYER.inGame) {
-      button.onclick = () => {switchSection('lobby');};
-      button.innerText = 'Return to lobby';
+    if ($USER.inRoom) {
+      button.onclick = () => {switchSection('room');};
+      button.innerText = 'Return to room';
     } else {
-      button.onclick = () => {switchSection('lobbiesList');};
-      button.innerText = 'Play';
+      button.onclick = () => {switchSection('roomsList');};
+      button.innerText = 'Rooms';
     }
   }
 }

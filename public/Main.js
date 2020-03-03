@@ -3,8 +3,8 @@ const $RELEASE = 'alpha';
 var $SOCKET = io.connect(window.location.href);
 var $LOGGEDIN = false; // is-logged-in flag
 var $SECTION; // currently displayed section name
-var $PLAYER; // player account dataa
-var $GAME;
+var $USER; // user account data
+var $ROOM;
 
 var domSections;
 
@@ -16,8 +16,8 @@ function onload() {
     home: new DomSection('SectionHome', new Permissions(0, 1)),
     about: new DomSection('SectionAbout', new Permissions(0, 1)),
     account: new DomSection('SectionAccount', new Permissions(1, 1), onSwitchAccount),
-    lobbiesList: new DomSection('SectionListing', new Permissions(1, 0), onShowLobbies),
-    lobby: new DomSection('SectionLobby', new Permissions(1, 2)),
+    roomsList: new DomSection('SectionListing', new Permissions(1, 0), onShowRooms),
+    room: new DomSection('SectionRoom', new Permissions(1, 2)),
     admin: new DomSection('SectionAdmin', new Permissions(2, 1))
   };
   $SECTION = getCookie('Section');

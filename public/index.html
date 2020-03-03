@@ -2,14 +2,16 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>Swarm Conquest</title>
+    <title>Disken Chat</title>
     <link rel="icon" type="image/png" href="favicon.ico"/>
-    <!-- <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'> -->
+    <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="css/master.css">
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/button.css">
     <link rel="stylesheet" href="css/listing.css">
-    <link rel="stylesheet" href="css/lobby.css">
+    <link rel="stylesheet" href="css/room.css">
+    <link rel="stylesheet" href="css/stationary.css">
+    <link rel="stylesheet" href="css/mobile.css">
     <link rel="stylesheet" href="css/popup.css">
     <script src="/socket.io/socket.io.js"></script>
     <script src="Main.js" charset="utf-8"></script>
@@ -17,13 +19,14 @@
     <script src="utilities/Cookies.js" charset="utf-8"></script>
     <script src="utilities/DomUtils.js" charset="utf-8"></script>
     <script src="utilities/Switcher.js" charset="utf-8"></script>
+    <script src="utilities/JsColor.js" charset="utf-8"></script>
     <script src="accounts/API.js" charset="utf-8"></script>
     <script src="accounts/Dom.js" charset="utf-8"></script>
-    <script src="games/API.js" charset="utf-8"></script>
-    <script src="games/Dom.js" charset="utf-8"></script>
+    <script src="rooms/API.js" charset="utf-8"></script>
+    <script src="rooms/Dom.js" charset="utf-8"></script>
     <script src="source/Chat.js" charset="utf-8"></script>
     <script src="source/SlotsDom.js" charset="utf-8"></script>
-    <script src="source/Game.js" charset="utf-8"></script>
+    <script src="source/Room.js" charset="utf-8"></script>
   </head>
   <body onload="onload()">
     <header id="LoggedOutHeader" hidden=true>
@@ -42,8 +45,8 @@
     </header>
     <div id="content">
       <section id="SectionHome" hidden=true>
-        <h1>Swarm Conquest</h1>
-        <p> Node.js real-time multiplayer game </p>
+        <h1>Disken Chat</h1>
+        <p> Node.js room-based chat app </p>
         <div><a class="button" id="PlayButton"> - </a></div>
         <div><a class="button" onclick="switchSection('about')"> About </a></div>
         <div id="Version"></div>
@@ -59,41 +62,38 @@
         <h3> Your account </h3>
         <a class="button" onclick="switchSection('home')"> Back </a>
         <div id="AccountDataHolder" class="content"> </div>
+        <h4> Change your chat color </h4>
+        <p> Colors are normalized, your actual color may diffed from what you choose </p>
+        <input id="ColorInput" class="jscolor {valueElement:'chosen-value'}"/>
+        <div> <a class="button" onclick="confirmColorChange()"> Confirm </a></div>
       </section>
       <section id="SectionListing" hidden=true>
-        <h3> Available Lobbies </h3>
-        <div><a class="button" onclick="onShowLobbies()"> Reload </a></div>
+        <h3> Available Rooms </h3>
+        <div><a class="button" onclick="onShowRooms()"> Reload </a></div>
         <div><a class="button" onclick="switchSection('home')"> Back </a></div>
-        <div id="LobbiesListHolder" class="content"> </div>
+        <div id="RoomsListHolder" class="content"> </div>
       </section>
-      <section id="SectionLobby" hidden=true>
-        <h3> Game lobby </h3>
-        <div id="LobbyInfo">
-            Game ID <p id="LobbyGameID" class="property"> </p>
-            Playing on map <p id="LobbyMapName" class="property"> </p>
+      <section id="SectionRoom" hidden=true>
+        <h3> Room #<span id="RoomID"> </span> </h3>
+        <div id="RoomControls" class="content">
+          <p> Users in this room </p>
+          <div id="RoomUsersSlots"> </div>
         </div>
-        <div id="LobbyControls" class="content">
-          <p> Set your status </p>
-          <div><a class="button" id="LobbyReadyButton"> Ready </a></div>
-          <p> Lobby slots </p>
-          <div id="LobbyPlayerSlots"> </div>
-        </div>
-        <div id="LobbyChat" class="content">
+        <div id="RoomChat" class="content">
           <div id="ChatContent"></div>
           <input type="text" id="ChatInput" placeholder="Type your message here. Enter to send." />
         </div>
         <div class="clear"> </div>
         <div><a class="button" onclick="switchSection('home')"> Minimise </a></div>
-        <div><a class="button" onclick="onLeaveLobby()"> Leave </a></div>
+        <div><a class="button" onclick="onLeaveRoom()"> Leave </a></div>
       </section>
       <section id="SectionAdmin" hidden=true>
         <h3>Admin Panel</h3>
         <div><a class="button" onclick="switchSection('home')"> Back </a></div>
         <div class="content">
-          <h4> Create a new game </h4>
-          <p> Map ID <input type="text" id="newGameMapID"></p>
-          <p> Max players <input type="number" id="newGameMaxPlayers"></p>
-          <div><a class="button" onclick="onCreateGame()"> Confirm </a></div>
+          <h4> Create new room </h4>
+          <p> Max users <input type="number" id="newRoomMaxUsers"></p>
+          <div><a class="button" onclick="onCreateRoom()"> Confirm </a></div>
         </div>
       </section>
     </div>

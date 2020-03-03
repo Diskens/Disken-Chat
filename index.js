@@ -1,7 +1,7 @@
 const PORT = 80;
 
 var app, meta, common={}, current={};
-var games = {}; // active games
+var rooms = {}; // active rooms
 
 // Utilities
 const Application = require('./server/utils/Application.js').Application;
@@ -10,8 +10,8 @@ const MetaHolder = require('./server/utils/MetaHolder.js').MetaHolder;
 const AccountsApi = require('./server/accounts/API.js').AccountsApi;
 const AccountsHolder = require('./server/accounts/Holder.js').AccountsHolder;
 
-const GamesApi = require('./server/games/API.js').GamesApi;
-const GamesHolder = require('./server/games/Holder.js').GamesHolder;
+const RoomsApi = require('./server/rooms/API.js').RoomsApi;
+const RoomsHolder = require('./server/rooms/Holder.js').RoomsHolder;
 
 async function main() {
   app = new Application(PORT, './public');
@@ -22,10 +22,10 @@ async function main() {
   current.activeClients = {};
   current.accounts = new AccountsHolder();
   await current.accounts.flagEveryoneOffline();
-  current.games = new GamesHolder();
+  current.rooms = new RoomsHolder();
 
   const data = {meta, common, current};
-  const apis = [ new AccountsApi(data), new GamesApi(data) ];
+  const apis = [ new AccountsApi(data), new RoomsApi(data) ];
   for (var api of apis) app.addApi(api);
   app.begin();
 }

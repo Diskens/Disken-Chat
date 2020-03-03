@@ -2,22 +2,29 @@ p.property {
   font-weight: bold;
 }
 
-#SectionLobby .content {
+#SectionRoom .content {
   float: right;
   box-sizing: border-box;
   padding: 5px;
-  width: calc(100% - 8px);
   margin: 3px 4px;
 }
+#ChatContent, #RoomControls {
+  height: calc(100vh - 250px - 2.7em);
+}
 @media only screen and (min-width: 800px) {
-  #SectionLobby .content {
-    width: calc(50% - 8px);
-  }
+  #RoomControls { width: calc(30% - 8px); }
+  #RoomChat { width: calc(70% - 8px); }
+}
+@media only screen and (max-width: 799px) {
+  #SectionRoom .content { width: calc(100% - 8px); }
+  #ChatContent { height: calc(100vh - 250px - 2.7em - 160px);}
+  #RoomControls { height: auto; }
 }
 
 
-/* PLAYER SLOTS */
-.playerSlot {
+
+/* USER SLOTS */
+.userSlot {
   /**/
 }
 .empty {
@@ -32,7 +39,6 @@ p.property {
 
 #ChatContent {
   box-sizing: border-box;
-  height: calc(100vh - 500px);
   width: 100%;
   padding: 3px;
   border: 0px;
@@ -52,7 +58,7 @@ p.property {
   font-family: inherit;
   font-size: inherit;
 }
-#ChatInput, #ChatContent, #LobbyControls, #LobbyInfo {
+#ChatInput, #ChatContent, #RoomControls {
   background: #1E1E1E80;
   color: #FFF;
 }
@@ -66,9 +72,16 @@ p.property {
   margin: 3px;
   border-radius: 1px 10px 10px 1px;
 }
-.message {
-  background: #631F50;
-}
 .announcement {
   background: #4444;
+  border: 1px solid #666;
+}
+.chatEntry a {
+  text-decoration: underline;
+}
+.typing {
+  opacity: .5;
+}
+.typing .chatTime {
+  opacity: .1;
 }

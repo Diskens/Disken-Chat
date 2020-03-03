@@ -1,31 +1,31 @@
 
 class SlotsDom {
-  constructor(containerID, maxPlayers, players) {
-    this.playerSlots = {};
+  constructor(containerID, maxUsers, users) {
+    this.userSlots = {};
     this.slotsContainer = $id(containerID);
-    for (var player of players)
-      this.addPlayerSlot(player)
-    for (var index=0; index<maxPlayers-players.length; index++)
+    for (var user of users)
+      this.addUserSlot(user)
+    for (var index=0; index<maxUsers-users.length; index++)
       this.addEmptySlot()
   }
-  addPlayerSlot(username) {
+  addUserSlot(username) {
     var slot = document.createElement('div');
-    slot.classList.add('playerSlot');
+    slot.classList.add('userSlot');
     slot.innerText = username;
-    $id(lobbyDomElements.lobbyPlayerSlots).appendChild(slot);
-    this.playerSlots[username] = slot;
+    $id(roomDomElements.roomUsersSlots).appendChild(slot);
+    this.userSlots[username] = slot;
   }
-  removePlayerSlot(username) {
-    var slot = this.playerSlots[username];
+  removeUserSlot(username) {
+    var slot = this.userSlots[username];
     slot.parentNode.removeChild(slot);
-    delete this.playerSlots[username];
+    delete this.userSlots[username];
   }
   addEmptySlot() {
     var slot = document.createElement('div');
-    slot.classList.add('playerSlot');
+    slot.classList.add('userSlot');
     slot.classList.add('empty');
     slot.innerText = '[Empty slot]'
-    $id(lobbyDomElements.lobbyPlayerSlots).appendChild(slot);
+    $id(roomDomElements.roomUsersSlots).appendChild(slot);
   }
   removeEmptySlot() {
     var slots = Array.from($cn('empty'));
@@ -33,13 +33,13 @@ class SlotsDom {
     slot.parentNode.removeChild(slot);
   }
   setSlotReadyStatus(username, status) {
-    var slot = this.playerSlots[username];
+    var slot = this.userSlots[username];
     if (status) slot.classList.add('ready');
     else slot.classList.remove('ready');
   }
   removeAll() {
     var slots = Array.from($cn('empty'));
     for (var slot of slots) slot.parentNode.removeChild(slot);
-    for (var slot of Object.values(this.playerSlots)) slot.parentNode.removeChild(slot);
+    for (var slot of Object.values(this.userSlots)) slot.parentNode.removeChild(slot);
   }
 }

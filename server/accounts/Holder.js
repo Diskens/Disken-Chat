@@ -1,33 +1,34 @@
 const DataHolder = require('../utils/DataHolder.js').DataHolder;
+const Color = require('../utils/Color.js').Color;
 
 exports.AccountsHolder = class AccountsHolder extends DataHolder {
   constructor() {
     super('current/accounts.json');
   }
   async login(sessionID, username, password) {
-    var player = await this.db.asyncFindOne({username});
-    if (player == undefined)
+    var user = await this.db.asyncFindOne({username});
+    if (user == undefined)
       return {success:false, reason:'No account with this username was found'};
-    if (player.isOnline) {
+    if (user.isOnline) {
       return {success:false, reason:'You are already logged in elsewhere'};
     }
-    if (player.password != password)
+    if (user.password != password)
       return {success:false, reason:'Incorrect password'};
-    var data = {sessionID, isOnline: true, inGame: false, gameID: null};
-    player = this.cleanPlayerData(Object.assign(player, data));
+    var data = {sessionID, isOnline: true, inRoom: false, roomID: null};
+    user = this.cleanUserData(Object.assign(user, data));
     await this.db.updateEntry({username}, data);
-    return {success: true, player};
+    return {success: true, user};
   }
   async loginWithCookie(username, sessionID, newSessionID) {
-    var player = await this.db.asyncFindOne({username});
-    if (player == undefined) return {success:false};
-    if (player.isOnline) return {success:false};
-    if (player.sessionID == null) return {success:false};
-    if (player.sessionID != sessionID) return {success:false};
+    var user = await this.db.asyncFindOne({username});
+    if (user == undefined) return {success:false};
+    if (user.isOnline) return {success:false};
+    if (user.sessionID == null) return {success:false};
+    if (user.sessionID != sessionID) return {success:false};
     var data = {isOnline: true, sessionID:newSessionID};
-    player = this.cleanPlayerData(Object.assign(player, data));
+    user = this.cleanUserData(Object.assign(user, data));
     await this.db.updateEntry({username}, data);
-    return {success: true, player};
+    return {success: true, user};
   }
   async signup(username, password) {
     // Length and characters check
@@ -40,13 +41,13 @@ exports.AccountsHolder = class AccountsHolder extends DataHolder {
         return {success:false, reason:'Username contains invalid character'};
     }
     // Username taken check
-    var player = await this.db.asyncFindOne({username});
-    if (player != undefined)
+    var user = await this.db.asyncFindOne({username});
+    if (user != undefined)
       return {success:false, reason:'Username already taken'};
     // Insert
     this.db.insert({ username, password,
-      gamesPlayed: 0, accountCreated: Date.now(),
-      inGame:false, gameID:null, isReady:false,
+      accountCreated: Date.now(), color: '#631F50',
+      inRoom:false, roomID:null,
       isOnline:false, sessionID:null,
       permissions: 0
     });
@@ -58,32 +59,48 @@ exports.AccountsHolder = class AccountsHolder extends DataHolder {
   async logoutBySocket(sessionID) {
     try {await this.db.updateEntry({sessionID}, {isOnline:false});}
     catch (err) { if (err != 'QueryNotFoundError') throw err; }
-    var player = await this.db.asyncFindOne({sessionID});
-    return player;
+    var user = await this.db.asyncFindOne({sessionID});
+    return user;
   }
 
+  // ACCOUNT COLORS
+  async changeColor(username, sessionID, colorCode) {
+    var user = await this.db.asyncFindOne({username});
+    if (sessionID != user.sessionID) return {success: false};
+    var color = new Color(colorCode);
+    color.makeValidBackground();
+    await this.db.updateEntry({username}, {color:color.get()});
+    return {success:true, roomID:user.roomID, color:color.get()};
+  }
+  async getColor(username) {
+    var user = await this.db.asyncFindOne({username});
+    return {username, color:user.color};
+  }
+
+  // IN-ROOM FLAG
+  async flagUserInRoom(username, roomID) {
+    await this.db.updateEntry({username}, {inRoom:true, roomID});
+  }
+  async flagUserOutRoom(username) {
+    await this.db.updateEntry({username}, {inRoom:false, roomID:null});
+  }
+
+  // UTILITIES
   async getByUsername(username) {
-    var player = await this.db.asyncFindOne({username});
-    return player;
+    var user = await this.db.asyncFindOne({username});
+    return user;
   }
-  async flagPlayerIngame(username, gameID) {
-    await this.db.updateEntry({username}, {inGame:true, gameID});
-  }
-  async flagPlayerOutgame(username) {
-    await this.db.updateEntry({username}, {inGame:false, gameID:null});
-  }
-
-  cleanPlayerData(player) {
-    delete player.password;
-    delete player.sessionID;
-    delete player._id;
-    return player;
+  cleanUserData(user) {
+    delete user.password;
+    delete user.sessionID;
+    delete user._id;
+    return user;
   }
   async flagEveryoneOffline() {
     console.log('[Accounts] Flagging everyone offline');
-    var players = await this.db.asyncFind({});
-    for (var player of players) {
-      await this.db.updateEntry({username:player.username}, {isOnline:false})
+    var users = await this.db.asyncFind({});
+    for (var user of users) {
+      await this.db.updateEntry({username:user.username}, {isOnline:false})
     }
   }
 }

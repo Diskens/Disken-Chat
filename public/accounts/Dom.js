@@ -7,7 +7,7 @@ function signupOnclick() {
   API_Signup($id('Username').value, $id('Password').value);
 }
 function logoutOnclick() {
-  API_Logout($PLAYER.username);
+  API_Logout($USER.username);
 }
 
 // Sections
@@ -16,16 +16,18 @@ function onSwitchAccount() {
   removeChildren(holder);
 
   var elm = document.createElement('h3');
-  elm.innerText = $PLAYER.username;
-  holder.appendChild(elm);
-
-  var elm = document.createElement('p');
-  elm.innerText = `Games played: ${$PLAYER.gamesPlayed}`;
+  elm.innerText = $USER.username;
   holder.appendChild(elm);
 
   var elm = document.createElement('p');
   var date = new Date(0);
-  date.setSeconds($PLAYER.accountCreated/1000);
+  date.setSeconds($USER.accountCreated/1000);
   elm.innerText = `Joined: ${date.toLocaleDateString('en-UK')}`;
   holder.appendChild(elm);
+}
+
+// Account color
+function confirmColorChange(picker) {
+  var color = $id('ColorInput').style['background-color'];
+  API_ChangeUserColor($USER.username, color);
 }

@@ -1,0 +1,19 @@
+@media only screen and (min-resolution: 120dpi) and (orientation: portrait) {
+  html, body {
+    font-size: 1.9em;
+  }
+  header input {
+    width: calc(50% - 8px);
+  }
+  .button {
+    display: block;
+    width: 50%;
+    padding: 1em 15px;
+    margin: auto;
+  }
+}
+@media only screen and (min-resolution: 120dpi) and (orientation: landscape) {
+  html, body {
+    font-size: 1.4em;
+  }
+}

@@ -8,58 +8,81 @@ exports.AccountsApi = class AccountsApi {
       Signup: this.signup,
       Logout: this.logout,
       disconnect: this.disconnect,
-      CookieLogin: this.cookieLogin
+      CookieLogin: this.cookieLogin,
+      SetIsTyping: this.setIsTyping,
+      ChangeUserColor: this.changeUserColor,
+      GetUserColor: this.getUserColor
     };
   }
 
   async login(socket, data) {
     var result = await current.accounts.login(socket.id, data.username, data.password);
-    if (result.success) console.log(`[Accounts] Player ${data.username} logged in`);
+    if (result.success) console.log(`[Accounts] ${data.username} logged in`);
     socket.emit('Re_Login', result);
   }
   async signup(socket, data) {
     var result = await current.accounts.signup(data.username, data.password);
-    if (result.success) console.log(`[Accounts] Player ${data.username} signed up`);
+    if (result.success) console.log(`[Accounts] ${data.username} signed up`);
     socket.emit('Re_Signup', result);
   }
   async logout(socket, data) {
-    var player = await current.accounts.getByUsername(data.username);
-    if (player.inGame) {
-      socket.to(`#${player.gameID}`).emit('Re_ChatAnnouncement', { type:'leave',
-        text:`${player.username} has left the lobby`});
-      socket.leave(`#${player.gameID}`);
+    var user = await current.accounts.getByUsername(data.username);
+    if (user.inRoom) {
+      socket.to(`#${user.roomID}`).emit('Re_StatusUpdate', {
+        type: 'leave', username: data.username
+      });
+      socket.leave(`#${user.roomID}`);
       delete current.activeClients[socket.id];
-      await current.games.leaveGame(data.username, player.gameID);
-      await current.accounts.flagPlayerOutgame();
+      await current.rooms.leaveRoom(data.username, user.roomID);
+      await current.accounts.flagUserOutRoom();
     }
     await current.accounts.logoutByUsername(data.username);
   }
   async disconnect(socket) {
-    var player = await current.accounts.logoutBySocket(socket.id);
-    if (player == undefined) return;
-    if (!player.inGame) return;
+    var user = await current.accounts.logoutBySocket(socket.id);
+    if (user == undefined) return;
+    if (!user.inRoom) return;
     delete current.activeClients[socket.id];
-    socket.to(`#${player.gameID}`).emit('Re_ChatAnnouncement', {
-      type: 'disconnect',
-      text: `${player.username} has disconnected (can reconnect in 5 s)`
+    console.log(`[Rooms] Lost connection with ${user.username}`);
+    socket.to(`#${user.roomID}`).emit('Re_StatusUpdate', {
+      type: 'disconnect', username: user.username
     });
     setTimeout(async function(username) {
-      var player = await current.accounts.getByUsername(username);
-      if (player.isOnline || !player.inGame) return;
-      console.log(`[Games] Kicking ${player.username} from #${player.gameID}`);
-      await current.games.leaveGame(player.username, player.gameID);
-      await current.accounts.flagPlayerOutgame(player.username);
-      socket.to(`#${player.gameID}`).emit('Re_ChatAnnouncement', {
-        type: 'kickout',
-        text: `${player.username} was removed from the lobby`
+      var user = await current.accounts.getByUsername(username);
+      if (user.isOnline || !user.inRoom) return;
+      console.log(`[Rooms] Kicking ${user.username} from #${user.roomID}`);
+      await current.rooms.leaveRoom(user.username, user.roomID);
+      await current.accounts.flagUserOutRoom(user.username);
+      socket.to(`#${user.roomID}`).emit('Re_StatusUpdate', {
+        type: 'kickout', username: username
       });
-    }, 5000, player.username);
+    }, 5000, user.username);
   }
   async cookieLogin(socket, data) {
     var result = await current.accounts.loginWithCookie(data.username, data.sessionID, socket.id);
     socket.emit('Re_CookieLogin', result);
     if (result.success)
-      console.log(`[Accounts] Player ${result.player.username} reconnected`);
+      console.log(`[Accounts] ${result.user.username} reconnected`);
   }
-
+  async setIsTyping(socket, data) {
+    var user = await current.accounts.getByUsername(data.username);
+    if (user.sessionID != data.sessionID) return {success:false};
+    if (!user.inRoom) return {success:false};
+    socket.to(`#${user.roomID}`).emit('Re_SetIsTyping', {username:data.username, status:data.status});
+  }
+  async changeUserColor(socket, data) {
+    var result = await current.accounts.changeColor(data.username, data.sessionID, data.color);
+    console.log(`[Accounts] ${data.username} changed chat color`);
+    if (result.success) {
+      var roomID = result.roomID;
+      delete result.roomID;
+      if (roomID != null)
+        socket.to(`#${roomID}`).emit('Re_GetUserColor', {username:data.username,color:result.color});
+    }
+    socket.emit('Re_ChangeUserColor', result);
+  }
+  async getUserColor(socket, data) {
+    var result = await current.accounts.getColor(data.username);
+    socket.emit('Re_GetUserColor', result);
+  }
 }

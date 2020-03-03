@@ -18,7 +18,6 @@ html, body {
   font-family: 'Lato', 'Verdana', sans-serif;
   text-align: center;
   font-size: 1.05em;
-  animation: bodyBackgroundAnimation 4.5s ease infinite;
 }
 
 #SectionHome h1 {
@@ -49,10 +48,13 @@ a {
 }
 section {
   font-size: .9em;
-  max-width: 80%;
+  max-width: calc(80% - 10px);
   margin: 10px auto;
   padding: 10px 0px;
   animation: panelEffect .3s ease-out;
+}
+@media only screen and (max-width: 1800px) {
+  section { max-width: calc(90% - 10px); }
 }
 @media only screen and (max-width: 1100px) {
   section { max-width: calc(100% - 10px); }
@@ -61,7 +63,17 @@ section {
 #Version {
   opacity: .3;
   position: absolute;
-  top: calc(100vh - 30px);
-  left: calc(50vw - 100px);
-  width: 200px;
+  top: calc(100vh - 2.5em);
+  left: 0;
+  width: 100vw;
+}
+
+
+/* COLOR CHANGE
+TODO: Move this to more appropriate section
+*/
+#ColorInput {
+  width: 75px;
+  height: 2em;
+  margin-bottom: 5px;
 }

@@ -1,38 +1,37 @@
 // Onclicks
-function onCreateGame() {
-  API_CreateGame($id('newGameMaxPlayers').value, $id('newGameMapID').value);
+function onCreateRoom() {
+  API_CreateRoom($id('newRoomMaxUsers').value);
 }
-function onJoinLobby(ID) {
-  API_JoinLobby($PLAYER.username, ID);
+function onJoinRoom(ID) {
+  API_JoinRoom($USER.username, ID);
 }
-function onLeaveLobby() {
-  API_LeaveLobby($PLAYER.username, $GAME.ID);
+function onLeaveRoom() {
+  API_LeaveRoom($USER.username, $ROOM.ID);
 }
 
 
-// Section lobbies list
-function onShowLobbies() {
-  API_GetAvailableGames()
+// Section rooms list
+function onShowRooms() {
+  API_GetAvailableRooms()
 }
-function showLobbies(games) { // Called by the response
-  const holder = $id('LobbiesListHolder');
+function showRooms(rooms) { // Called by the response
+  const holder = $id('RoomsListHolder');
   removeChildren(holder);
-  for (var game of games) {
-    var startedAgo = getTimeDiffText(Date.now(), game.startTime);
+  for (var room of rooms) {
+    var startedAgo = getTimeDiffText(Date.now(), room.startTime);
     holder.innerHTML += `
-      <div class='game'>
+      <div class='room'>
         <div class='left'>
           <table>
-          <tr> <td> Players </td><td> ${game.players.length} of ${game.maxPlayers} </td> </tr>
-          <tr> <td> Map ID </td><td> ${game.mapID} </td> </tr>
+          <tr> <td> Users </td><td> ${room.users.length} of ${room.maxUsers} </td> </tr>
           <tr> <td> Created </td><td> ${startedAgo} </td> </tr>
           </table>
         </div>
         <div class='right'>
-          ${game.ID}
+          ${room.ID}
         </div>
         <div class='clear'> </div>
-        <p><a class="button" onclick="onJoinLobby(${game.ID})"> Join </a></p>
+        <p><a class="button" onclick="onJoinRoom(${room.ID})"> Join </a></p>
       </div>
 `;
   }
