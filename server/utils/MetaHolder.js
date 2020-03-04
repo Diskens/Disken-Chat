@@ -6,8 +6,8 @@ exports.MetaHolder = class MetaHolder {
   }
   getVersion() { return this._get('version'); }
   getRelease() { return this._get('release'); }
-  getTotalRoomsCreated() { return this._get('totalRoomsPlayed'); }
-  getNextRoomID() { return this._incr('totalRoomsPlayed'); }
+  getTotalRoomsCreated() { return this._get('totalRoomsCreated'); }
+  getNextRoomID() { return this._incr('totalRoomsCreated'); }
   incrOnlineCount() { return this._incr('onlineCount'); }
   decrOnlineCount() { return this._decr('onlineCount'); }
 
