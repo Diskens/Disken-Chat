@@ -54,7 +54,7 @@ class Room {
     API_StatusUpdate($SOCKET.id, $USER.username, $ROOM.ID, $USER.isReady);
   }
   playAudio(variant) {
-    let audio = new Audio(`/audio/${variant}.${$ROOM.audioType}`);
+    let audio = new Audio(`/audio/${variant}.ogg`);
     console.log('[Audio]', variant, audio);
     audio.play();
   }
