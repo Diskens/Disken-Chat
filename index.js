@@ -22,7 +22,7 @@ async function main() {
   current.activeClients = {};
   current.accounts = new AccountsHolder();
   await current.accounts.flagEveryoneOffline();
-  current.rooms = new RoomsHolder();
+  current.rooms = new RoomsHolder(meta);
 
   const data = {meta, common, current};
   const apis = [ new AccountsApi(data), new RoomsApi(data) ];

@@ -1,8 +1,10 @@
 const DataHolder = require('../utils/DataHolder.js').DataHolder;
+var meta;
 
 exports.RoomsHolder = class RoomsHolder extends DataHolder {
-  constructor() {
+  constructor(_meta) {
     super('current/rooms.json');
+    meta = _meta;
   }
   async getAvailableRooms() {
     var rooms = await this.db.asyncFind({});
