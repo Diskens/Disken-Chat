@@ -5,27 +5,22 @@
     position: fixed; top: calc(1.5em + 13px); left: 0; z-index: 50;
   }
   .HomeSideBarHidden { display: none; }
-  #SectionHome button#HomeSideBarToggle { width: auto;
+  #SectionHome button#HomeSideBarToggle {
+    width: auto;
     position: fixed; bottom: 19px; left: -20px; z-index: 70;
     padding: 3px 8px; opacity: .8;
     transform: matrix(0, 1, -1, 0, 0, 0);
     border-radius: 5px 5px 0 0;
   }
   @media screen and (min-resolution: 120dpi) {
-    #RoomHeader .property {
-      width: 50px; }
-    #RoomHeader button {
-      width: 100px;
-    }
+    #RoomHeader .property { width: 50px; }
+    #RoomHeader button { width: 100px; }
     #ChatContent { height: calc(100vh - 6em - 18px); }
     #ChatInput { width: calc(100% - 35px); margin-left: 35px; font-size: 1.5em; }
   }
   @media screen and (max-resolution: 119dpi) {
-    #RoomHeader .property {
-      width: 23px; }
-    #RoomHeader button {
-      width: 50px;
-    }
+    #RoomHeader .property { width: 23px; }
+    #RoomHeader button { width: 50px; }
     #ChatContent { height: calc(100vh - 5.5em - 18px); }
     #ChatInput { width: calc(100% - 28px); margin-left: 28px; }
   }
@@ -36,6 +31,9 @@
   #SectionHome button#HomeSideBarToggle { display: none; }
   #ChatContent { height: calc(100vh - 5.5em - 18px); }
   #ChatInput { width: 100%; }
+  #RoomHeader .property { width: 23px; }
+  #RoomHeader button { width: 50px;
+  }
 }
 #HomeSideBar button { width: calc(50% - 6px); }
 .HomeSideSub { height: calc(50% - 25px); }
