@@ -1,4 +1,4 @@
-const $PORT = 205;
+const $PORT = 80;
 const LOG_FN_TEMPLATE = 'logs/serverLogs_$DATE.txt';
 
 var $LOG, $APP;
