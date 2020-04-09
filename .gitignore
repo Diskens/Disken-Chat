@@ -1,6 +1,9 @@
 # Gitignore downloaded from
 # https://github.com/github/gitignore/blob/master/Node.gitignore
 
+# Directory with private key and certificate
+secret
+
 # Logs
 logs
 *.log

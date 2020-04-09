@@ -1,27 +1,43 @@
-@keyframes popupFadeIn {
-  0%   {opacity: 0; transform: translateY(-50px);}
-  50%  {opacity: .4; transform: translateY(-10px);}
-  100% {opacity: 1; transform: translateY(0);}
+
+#PopupsContainer {
+  position: absolute;
+  top: calc(35px + 3em);
+  right: 5px;
+  width: 30%;
+  min-width: 300px;
+  z-index: 100;
 }
 
 .popup {
-  position: fixed;
-  left: calc(50vw - 200px);
-  top: 100px;
-  width: 400px;
-  padding: 30px 5px;
-  background: #111;
-  text-align: center;
-  font-family: 'Courier New';
-  animation: popupFadeIn .3s ease;
-  border-radius: 8px;
-  font-size: 1.1em;
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #666;
+  background: #333E;
+  margin-bottom: 5px;
+}
+/* LARGE SCREEN */
+@media only screen and (max-resolution: 119dpi) {
+  @keyframes AnimPopupSlideIn {
+    0%   { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  .popup {
+    animation: AnimPopupSlideIn .5s ease;
+  }
 }
 
-.error {
-  border: 3px solid #D33;
+.popupClose {
+  display: inline-block;
+  position: absolute;
+  top: 3px; right: 3px;
+  padding: 2px 9px;
+  font-size: .8em;
+  background: #F008;
+  transition: .25s ease;
 }
 
-.info {
-  border: 3px solid #3D3;
+.popupClose:hover {
+  background: #F00;
 }

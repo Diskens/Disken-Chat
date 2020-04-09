@@ -1,101 +1,154 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>Disken Chat</title>
-    <link rel="icon" type="image/png" href="favicon.ico"/>
-    <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="css/master.css">
-    <link rel="stylesheet" href="css/header.css">
-    <link rel="stylesheet" href="css/button.css">
-    <link rel="stylesheet" href="css/listing.css">
-    <link rel="stylesheet" href="css/room.css">
-    <link rel="stylesheet" href="css/stationary.css">
-    <link rel="stylesheet" href="css/mobile.css">
-    <link rel="stylesheet" href="css/popup.css">
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="Main.js" charset="utf-8"></script>
-    <script src="utilities/Popup.js" charset="utf-8"></script>
-    <script src="utilities/Cookies.js" charset="utf-8"></script>
-    <script src="utilities/DomUtils.js" charset="utf-8"></script>
-    <script src="utilities/Switcher.js" charset="utf-8"></script>
-    <script src="utilities/JsColor.js" charset="utf-8"></script>
-    <script src="accounts/API.js" charset="utf-8"></script>
-    <script src="accounts/Dom.js" charset="utf-8"></script>
-    <script src="rooms/API.js" charset="utf-8"></script>
-    <script src="rooms/Dom.js" charset="utf-8"></script>
-    <script src="source/Chat.js" charset="utf-8"></script>
-    <script src="source/SlotsDom.js" charset="utf-8"></script>
-    <script src="source/Room.js" charset="utf-8"></script>
-  </head>
-  <body onload="onload()">
-    <header id="LoggedOutHeader" hidden=true>
-      <input type="text" id="Username" placeholder="Username"/>
-      <input type="password" id="Password" placeholder="Password"/>
-      <a class="button" onclick="signupOnclick()"> Sign up </a>
-      <a class="button" onclick="loginOnclick()"> Login </a>
-    </header>
-    <header id="LoggedInHeader" hidden=true>
-      <span id="Welcome"></span>
-      <a class="button" onclick="logoutOnclick()"> Log out </a>
-      <a class="button" onclick="switchSection('account')"> Account </a>
-      <span id="adminHeader">
-        <a class="button" onclick="switchSection('admin')"> Admin </a>
-      </span>
-    </header>
-    <div id="content">
-      <section id="SectionHome" hidden=true>
-        <h1>Disken Chat</h1>
-        <p> Node.js room-based chat app </p>
-        <div><a class="button" id="PlayButton"> - </a></div>
-        <div><a class="button" onclick="switchSection('about')"> About </a></div>
-        <div id="Version"></div>
-      </section>
-      <section id="SectionAbout" hidden=true>
-        <h3> About </h3>
-        <a class="button" onclick="switchSection('home')"> Back </a>
-        <div class="content">
-          <p> Placeholder for some info about the project </p>
-        </div>
-      </section>
-      <section id="SectionAccount" hidden=true>
-        <h3> Your account </h3>
-        <a class="button" onclick="switchSection('home')"> Back </a>
-        <div id="AccountDataHolder" class="content"> </div>
-        <h4> Change your chat color </h4>
-        <p> Colors are normalized, your actual color may diffed from what you choose </p>
-        <input id="ColorInput" class="jscolor {valueElement:'chosen-value'}"/>
-        <div> <a class="button" onclick="confirmColorChange()"> Confirm </a></div>
-      </section>
-      <section id="SectionListing" hidden=true>
-        <h3> Available Rooms </h3>
-        <div><a class="button" onclick="onShowRooms()"> Reload </a></div>
-        <div><a class="button" onclick="switchSection('home')"> Back </a></div>
-        <div id="RoomsListHolder" class="content"> </div>
-      </section>
-      <section id="SectionRoom" hidden=true>
-        <h3> Room #<span id="RoomID"> </span> </h3>
-        <div id="RoomControls" class="content">
-          <p> Users in this room </p>
-          <div id="RoomUsersSlots"> </div>
-        </div>
-        <div id="RoomChat" class="content">
-          <div id="ChatContent"></div>
-          <input type="text" id="ChatInput" placeholder="Type your message here. Enter to send." />
-        </div>
-        <div class="clear"> </div>
-        <div><a class="button" onclick="switchSection('home')"> Minimise </a></div>
-        <div><a class="button" onclick="onLeaveRoom()"> Leave </a></div>
-      </section>
-      <section id="SectionAdmin" hidden=true>
-        <h3>Admin Panel</h3>
-        <div><a class="button" onclick="switchSection('home')"> Back </a></div>
-        <div class="content">
-          <h4> Create new room </h4>
-          <p> Max users <input type="number" id="newRoomMaxUsers"></p>
-          <div><a class="button" onclick="onCreateRoom()"> Confirm </a></div>
-        </div>
-      </section>
+<head>
+  <meta charset="utf-8">
+  <title>Disken Chat</title>
+  <link rel="icon" type="image/png" href="favicon.ico"/>
+  <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="css/general.css">
+  <link rel="stylesheet" href="css/buttons.css">
+  <link rel="stylesheet" href="css/interface.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/room.css">
+  <link rel="stylesheet" href="css/popup.css">
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="utilities/Cookies.js" charset="utf-8"></script>
+  <script src="utilities/Dom.js" charset="utf-8"></script>
+  <script src="utilities/Popup.js" charset="utf-8"></script>
+  <script src="utilities/SectionSwitcher.js" charset="utf-8"></script>
+  <script src="Main.js" charset="utf-8"></script>
+  <script src="api/AccountsAPI.js" charset="utf-8"></script>
+  <script src="api/AccountsDOM.js" charset="utf-8"></script>
+  <script src="api/RoomsAPI.js" charset="utf-8"></script>
+  <script src="api/RoomsDOM.js" charset="utf-8"></script>
+  <script src="app/PropertyIcons.js" charset="utf-8"></script>
+  <script src="app/RoomCreator.js" charset="utf-8"></script>
+  <script src="app/Room.js" charset="utf-8"></script>
+  <script src="app/Application.js" charset="utf-8"></script>
+</head>
+<body onload='onload()'>
+  <div id="PopupsContainer">
+  </div>
+
+  <header id="Header" hidden=true>
+    <p id="Welcome"> Welcome <span id="Username"></span>! </p>
+    <button id="ButtonLogout" onclick="logoutOnclick()" title="Log out"></button>
+    <button id="ButtonAbout" onclick="switchTo('about')" title="About this app"></button>
+    <button id="ButtonAccount" onclick="switchTo('account')" title="Your account details"></button>
+    <button id="ButtonHome" onclick="switchTo('home')" title="Home page"></button>
+    <div class="clear"></div>
+  </header>
+
+  <section id="SectionLogin" hidden=true>
+    <span id="VersionLogin"></span>
+    <div class="SectionHeader">
+      <h1>Disken Chat</h1>
+      <p> Room-based instant messaging app </p>
     </div>
-  </body>
+    <h4> Login or create account </h4>
+    <div>
+      <input type="text" id="LoginUsername" placeholder="Username" />
+      <input type="password" id="LoginPassword"  placeholder="Password"/>
+      <button id="ButtonLogin" onclick="loginOnclick()" title="Login to your account"> Login </button>
+      <button id="ButtonSignUp" onclick="signupOnclick()" title="Create new account"> Sign up </button>
+    </div>
+    <h4> Learn more about the app </h4>
+    <div id="LoginAbout">
+      <button onclick="switchTo('about')"> About </button>
+    </div>
+    <p id="CookiesNote">
+      This app uses cookies to store your session ID.
+      There aren't any trackers supplied by social networks or advertisers.
+    </p>
+  </section>
+
+  <section id="SectionHome" hidden=true>
+
+    <div id="HomeSideBar" class="HomeFrame">
+      <div id="HomeSideBarButtons">
+        <button id="ButtonListingRooms" title="Rooms you joined or own" onclick="$APP.switchHomeSub('rooms')"> Rooms </button>
+        <button id="ButtonListingBrowse" title="Browse public rooms" onclick="$APP.switchHomeSub('browse')"> Browse </button>
+        <button id="ButtonListingJoin" title="Join specific room" onclick="$APP.switchHomeSub('join')"> Join </button>
+        <button id="ButtonListingCreate" title="Create new room" onclick="$APP.switchHomeSub('create')"> New </button>
+      </div>
+      <div id="HomeSubRooms" class="HomeSideSub" hidden=true>
+        <h4> Your rooms </h4><div><!-- JS Listing --></div>
+      </div>
+      <div id="HomeSubBrowse" class="HomeSideSub" hidden=true>
+        <h4> Browse </h4><div><!-- JS Listing --></div>
+      </div>
+      <div id="HomeSubJoin" class="HomeSideSub" hidden=true>
+        <h4> Join </h4>
+        <div>
+          <div><p>Room name</p>
+            <input type="text" id="JoinName">
+            <div class="clear"></div></div>
+          <div><p>Room access code</p>
+            <input type="text" id="JoinPasscode">
+            <div class="clear"></div></div>
+          <button id="CreateSubmit" onclick="domJoinRoom()"> Join </button>
+        </div>
+      </div>
+      <div id="HomeSubCreate" class="HomeSideSub" hidden=true>
+        <h4> Create new room </h4>
+        <div>
+          <div><p>Room name</p>
+            <input type="text" id="CreateName">
+            <div class="clear"></div></div>
+          <div><p>Open to public</p>
+            <input type="checkbox" id="CreatePublic" value=false>
+            <div class="clear"></div></div>
+          <div><p>Save chat history</p>
+            <input type="checkbox" id="CreateHistory" value=false>
+          <div class="clear"></div></div>
+          <button id="CreateSubmit" onclick="domCreateRoom()"> Create </button>
+        </div>
+      </div>
+      <div id="RoomMembers" class="HomeSideSub" hidden=true>
+      </div>
+    </div>
+    <button id="HomeSideBarToggle" onclick="$APP.toggleSideBar()"> Toggle </button>
+
+    <div id="RoomContainer" class="HomeFrame" hidden=true>
+    </div>
+
+    <div class="clear"></div>
+  </section>
+
+  <section id="SectionAccount" hidden=true>
+    <h3>Your account</h3>
+  </section>
+
+  <section id="SectionAbout" hidden=true>
+    <div class="SectionHeader">
+      <h1> Disken Chat </h1>
+    </div>
+    <h3> About </h3>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      Pellentesque quis ex sit amet nisl vehicula ornare.
+      Pellentesque habitant morbi tristique senectus et netus
+      et malesuada fames ac turpis egestas.
+      In dolor diam, tempus sit amet risus ac,
+      pretium pharetra libero.
+      Aliquam laoreet elit sed ultricies vestibulum.
+      Nulla facilisi. Ut consectetur nulla id gravida facilisis.
+      Quisque id libero nulla.
+    </p>
+    <h3> Developer notes </h3>
+    <h5>Software version</h5>
+    <p id="VersionAbout" class="DeveloperNotes"> </p>
+    <h5>Issues and needed features</h5>
+    <div class="DeveloperNotes">
+      <ul>
+        <li> HTTPS certificate </li>
+        <li> Database encryption </li>
+        <li> Styling for mobile devices </li>
+        <li> Sending photos </li>
+      </ul>
+    </div>
+    <button onclick="back()"> Back </button>
+  </section>
+
+</body>
 </html>

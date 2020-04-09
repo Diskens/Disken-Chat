@@ -1,33 +1,38 @@
-const PORT = 80;
+const $PORT = 205;
+const LOG_FN_TEMPLATE = 'logs/serverLogs_$DATE.txt';
 
-var app, meta, common={}, current={};
-var rooms = {}; // active rooms
+var $LOG, $APP;
+var $DATA={};
 
-// Utilities
-const Application = require('./server/utils/Application.js').Application;
-const MetaHolder = require('./server/utils/MetaHolder.js').MetaHolder;
+const Log = require('./server/utilities/Logger.js').Logger;
 
-const AccountsApi = require('./server/accounts/API.js').AccountsApi;
-const AccountsHolder = require('./server/accounts/Holder.js').AccountsHolder;
+const Application = require('./server/utilities/Application.js').Application;
+const Meta = require('./server/utilities/Meta.js').Meta;
 
-const RoomsApi = require('./server/rooms/API.js').RoomsApi;
-const RoomsHolder = require('./server/rooms/Holder.js').RoomsHolder;
+const AccountsApi = require('./server/AccountsAPI.js').AccountsApi;
+const AccountsData = require('./server/AccountsData.js').AccountsData;
+const RoomsApi = require('./server/RoomsAPI.js').RoomsApi;
+const RoomsData = require('./server/RoomsData.js').RoomsData;
+const HistoryData = require('./server/HistoryData.js').HistoryData;
 
 async function main() {
-  app = new Application(PORT, './public');
-  meta = new MetaHolder('./current/meta.json');
-  console.log(`[Main] Starting (v${meta.getVersion()} ${meta.getRelease()})`);
-  meta._set('onlineCount', 0);
+  $DATA.meta = new Meta('./data/meta.json');
+  $DATA.meta.reset();
+  $LOG = new Log(LOG_FN_TEMPLATE, $DATA.meta.getTzOffset());
+  $APP = new Application($LOG, $PORT, './public');
 
-  current.activeClients = {};
-  current.accounts = new AccountsHolder();
-  await current.accounts.flagEveryoneOffline();
-  current.rooms = new RoomsHolder(meta);
+  $LOG.newSession($DATA.meta);
 
-  const data = {meta, common, current};
-  const apis = [ new AccountsApi(data), new RoomsApi(data) ];
-  for (var api of apis) app.addApi(api);
-  app.begin();
+  $DATA.accounts = new AccountsData($LOG, $DATA.meta);
+  await $DATA.accounts.reset();
+  $DATA.rooms = new RoomsData($LOG, $DATA.meta);
+  await $DATA.rooms.reset();
+  $DATA.history = new HistoryData($LOG, $DATA.meta);
+
+  $APP.addAPI(new AccountsApi($LOG, $DATA));
+  $APP.addAPI(new RoomsApi($LOG, $DATA));
+
+  $APP.begin();
 }
 
 main();

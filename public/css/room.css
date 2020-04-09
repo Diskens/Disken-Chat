@@ -1,87 +1,174 @@
-p.property {
-  font-weight: bold;
+
+@media only screen and (max-width: 950px) {
+  #RoomContainer { width: 100vw; }
+  #HomeSideBar { width: 400px;
+    position: fixed; top: calc(1.5em + 13px); left: 0; z-index: 50;
+  }
+  .HomeSideBarHidden { display: none; }
+  #SectionHome button#HomeSideBarToggle { width: auto;
+    position: fixed; bottom: 19px; left: -20px; z-index: 70;
+    padding: 3px 8px; opacity: .8;
+    transform: matrix(0, 1, -1, 0, 0, 0);
+    border-radius: 5px 5px 0 0;
+  }
+  #ChatInput { width: calc(100% - 28px); margin-left: 28px; }
+}
+@media only screen and (min-width: 951px) {
+  #RoomContainer { width: calc(100vw - 400px); }
+  #HomeSideBar { width: 400px; }
+  #SectionHome button#HomeSideBarToggle { display: none; }
+  #ChatInput { width: 100%; }
+}
+@media only screen and (max-resolution: 119dpi) {
+  #HomeSideBar button { width: calc(50% - 6px); }
+  .HomeSideSub { height: calc(50% - 25px); }
+  .HomeFrame {
+    float: left;
+    margin: 0;
+    box-sizing: border-box;
+    height: calc(100vh - 1.5em - 14px);
+  }
+  #HomeSideBar {
+    background-color: #3338;
+    margin: 0 !important;
+    padding-top: 2px;
+  }
+  #HomeSideBarButtons { opacity: .85; }
+  #HomeSideBar button {
+    box-sizing: border-box;
+    font-size: .9em;
+    padding: 3px 0;
+    margin: 1px auto;
+  }
+  #RoomHeader {
+    margin: 0px;
+    padding: 5px;
+    height: 1.5em;
+    text-align: left;
+    border-bottom: 1px solid #CCC;
+  }
+  #RoomHeader p { float: left; margin: .2em 0; }
+  #RoomHeader button {
+    float: right;
+    padding: 0px;
+    width: 50px;
+    height: 100%;
+    margin: 0px 2px;
+    border-radius: 0;
+  }
+  #ChatContent {
+    height: calc(100vh - 5.5em - 18px);
+    width: 100%;
+    scroll-behavior: smooth;
+    overflow-y: scroll;
+  }
+  #ChatInput {
+    text-align: left;
+    border-radius: 0;
+    padding: 4px 6px;
+    background-color: #000A;
+    opacity: .85;
+  }
+  #ChatInput:focus {
+    opacity: 1;
+  }
+
+  .HomeSideSub {
+    text-align: left;
+    overflow-y: auto;
+  }
+  .HomeSideSub h4 { margin: 10px 0; }
+  #HomeSubCreate input, #HomeSubJoin input {
+    display: inline; width: auto; color: #000; float: right; }
+  #HomeSubCreate input[type="checkbox"], #HomeSubJoin input[type="checkbox"] {
+    transform: scale(1.34);}
+  #HomeSubCreate p, #HomeSubJoin p {
+    float: left; margin: 0; }
+
+  .HomeSideSub .entry {
+    box-sizing: border-box;
+    margin: 2px 0;
+    background-color: #8883;
+    padding: 5px 10px;
+    display: block;
+    transition: background .2s ease;
+    text-decoration: none;
+  }
+  .HomeSideSub .entry:hover {
+    background-color: #8885;
+    cursor: pointer;
+  }
+  .HomeSideSub .entry .name {
+    font-size: 1.05em;
+  }
+
+  .HomeSideSub .user:hover { cursor: default; }
+
+  .roomOptions {
+    position: fixed;
+    top: calc(35px + 3em);
+    right: 5px;
+    width: 50%;
+    min-height: 33vh;
+    background-color: #0004;
+  }
+
+  .property {
+    float: right;
+    padding: 0px;
+    margin: 0px 2px;
+    border: 1px solid #963059;
+    background-color: #96305950;
+    background-attachment: local;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    cursor: help;
+  }
+  #RoomHeader .property {
+    width: 23px;
+    height: calc(100% - 2px);
+  }
+  .HomeSideSub .entry .property {
+    width: 1.5em;
+    height: 1.5em;
+    border-radius: 2px;
+  }
+  .HomeSideSub .entry .status {
+    float: left;
+    border-radius: 1.5em;
+    border: 2px solid #FFF;
+    width: calc(1.5em - 2px);
+    height: calc(1.5em - 2px);
+    margin-right: 3px;
+    transform: scale(.65);
+  }
+  .HomeSideSub .user .status {}
+  .active { background-color: #0A0; }
+  .away { background-color: #990; }
+  .offline { background-color: #822; }
 }
 
-#SectionRoom .content {
-  float: right;
-  box-sizing: border-box;
-  padding: 5px;
-  margin: 3px 4px;
-}
-#ChatContent, #RoomControls {
-  height: calc(100vh - 250px - 2.7em);
-}
-@media only screen and (min-width: 800px) {
-  #RoomControls { width: calc(30% - 8px); }
-  #RoomChat { width: calc(70% - 8px); }
-}
-@media only screen and (max-width: 799px) {
-  #SectionRoom .content { width: calc(100% - 8px); }
-  #ChatContent { height: calc(100vh - 250px - 2.7em - 160px);}
-  #RoomControls { height: auto; }
-}
-
-
-
-/* USER SLOTS */
-.userSlot {
-  /**/
-}
-.empty {
-  opacity: .5;
-}
-.ready {
-  /**/
-}
-
-
-/* CHAT */
-
-#ChatContent {
-  box-sizing: border-box;
-  width: 100%;
-  padding: 3px;
-  border: 0px;
-  margin: 0px;
-  font-family: inherit;
-  font-size: inherit;
-  resize: none;
-  scroll-behavior: smooth;
-  overflow-y: scroll;
+.message {
+  margin: 4px 7px;
+  margin-right: calc(40% - 12px);
   text-align: left;
 }
-#ChatInput {
-  box-sizing: border-box;
-  width: 100%;
-  border: 1px solid #666;
-  padding: 3px;
-  font-family: inherit;
-  font-size: inherit;
+.message .inner {
+  display: inline-block;
+  background-color: #5558;
+  border-radius: .5em;
+  padding: 4px 6px;
 }
-#ChatInput, #ChatContent, #RoomControls {
-  background: #1E1E1E80;
-  color: #FFF;
-}
-.chatTime {
-  color: #FFF7;
+.own {
+  margin-left: calc(40% - 6px);
   margin-right: 7px;
+  text-align: right;
 }
-.chatEntry {
-  word-wrap: break-word;
-  padding: 4px;
-  margin: 3px;
-  border-radius: 1px 10px 10px 1px;
+.own .inner {
+  background-color: #5558;
 }
-.announcement {
-  background: #4444;
-  border: 1px solid #666;
-}
-.chatEntry a {
-  text-decoration: underline;
-}
-.typing {
-  opacity: .5;
-}
-.typing .chatTime {
-  opacity: .1;
+
+.message .user {
+  color: #FFF8;
 }
