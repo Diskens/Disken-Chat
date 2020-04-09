@@ -39,13 +39,13 @@ exports.AccountsApi = class AccountsApi {
     $LOG.entry('Accounts', `${result.username} disconnected`);
     var userRooms = (await $DATA.rooms.getUserRooms(result.username)).rooms;
     for (var room of userRooms) { // TODO
-      $DATA.rooms.setUserStatus(room.ID, result.username, 0);
-      if (!result.delta) return;
-      if (result.room.activeCount == 1 && result.delta > 0)
+      var statusResult = $DATA.rooms.setUserStatus(room.ID, result.username, 0);
+      if (!statusResult.delta) return;
+      if (statusResult.room.activeCount == 1 && statusResult.delta > 0)
       $DATA.history.activateRoom(data.roomID);
-      if (!result.room.activeCount)
+      if (!statusResult.room.activeCount)
       $DATA.history.deactivateRoom(data.roomID);
-      for (var username of result.room.users) {
+      for (var username of statusResult.room.users) {
         var comember = $DATA.accounts.sockets[username];
         if (comember != undefined) comember.emit('RoomUserStatus', data);
       }
@@ -55,6 +55,19 @@ exports.AccountsApi = class AccountsApi {
     var result = await $DATA.accounts.logout(socket.id, data);
     if (result.success)
       $LOG.entry('Accounts', `${data.username} logged out`);
+    var userRooms = (await $DATA.rooms.getUserRooms(data.username)).rooms;
+    for (var room of userRooms) { // TODO
+      var statusResult = $DATA.rooms.setUserStatus(room.ID, result.username, 0);
+      if (!statusResult.delta) return;
+      if (statusResult.room.activeCount == 1 && statusResult.delta > 0)
+      $DATA.history.activateRoom(data.roomID);
+      if (!statusResult.room.activeCount)
+      $DATA.history.deactivateRoom(data.roomID);
+      for (var username of statusResult.room.users) {
+        var comember = $DATA.accounts.sockets[username];
+        if (comember != undefined) comember.emit('RoomUserStatus', data);
+      }
+    }
     socket.emit('Logout', result);
   }
   async signup(socket, data) {
