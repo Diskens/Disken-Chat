@@ -26,6 +26,7 @@ exports.RoomsApi = class RoomsApi {
     var result = await $DATA.rooms.joinRoom(data.roomName, data.username, data.passcode);
     socket.emit('JoinRoom', result);
     if (result.success) {
+      $LOG.entry('Rooms', `${data.username} joined #${result.room.ID}`);
       delete result.success;
       for (var username of result.room.users) {
         var comember = await $DATA.accounts.sockets[username];
@@ -39,7 +40,6 @@ exports.RoomsApi = class RoomsApi {
     socket.emit('GetUserRooms', result);
   }
   async message(socket, data) {
-    $LOG.entry('Rooms', `New message in ${data.roomID}`);
     data.timestamp = Date.now();
     var room = await $DATA.rooms.getRoom(data.roomID);
     if (room.history)

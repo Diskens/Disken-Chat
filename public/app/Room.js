@@ -42,15 +42,20 @@ class Room {
   onUserStatus(data) {
     if (!this.active) return;
     this.status[data.username] = data.status;
+    var element = $id(`userStatus_${data.username}`);
+    if (element == undefined) {
+      RoomCreator.addMemberElement(this, data.username, $id('RoomMembers'));
+      return;
+    }
     var statusTips = {
       offline: 'This user is offline',
       away: 'This user is online',
       active: 'This user is active'
     };
     for (var cname of Object.keys(statusTips))
-      $id(`userStatus_${data.username}`).classList.remove(cname);
-    $id(`userStatus_${data.username}`).classList.add(data.status);
-    $id(`userStatus_${data.username}`).title = statusTips[data.status];
+      element.classList.remove(cname);
+    element.classList.add(data.status);
+    element.title = statusTips[data.status];
   }
   onChatHistory(data) {
     console.log('History', data);

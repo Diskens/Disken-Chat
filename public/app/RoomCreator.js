@@ -7,6 +7,14 @@ function createTimeString(timestamp) {
   return 'before last midnight (TODO)'; // TODO
 }
 
+function linkify(text) {
+  // Method downloaded from https://stackoverflow.com/a/8943487/12987579
+  var urlRegex =/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+  return text.replace(urlRegex, function(url) {
+    return '<a href="' + url + '" target="_blank">' + url + '</a>';
+  });
+}
+
 const RoomCreator = {
   createIcons: (room) => {
     var publicIcon = room.isPublic ?
@@ -90,27 +98,30 @@ const RoomCreator = {
     title.innerText = 'Room members';
     container.appendChild(title);
     for (var user of room.users) {
-      var entry = $create('a');
-      container.appendChild(entry);
-      entry.classList.add('entry');
-      entry.classList.add('user');
-      var status = $create('input');
-      status.id = `userStatus_${user}`;
-      status.classList.add('property');
-      status.classList.add('status');
-      status.classList.add(room.status[user]);
-      entry.appendChild(status);
-      var name = $create('span');
-      name.classList.add('name');
-      entry.appendChild(name);
-      name.innerText = user;
-      if (user == room.owner) {
-        var owner = PropertyIcons.createOwnerUserIcon();
-        entry.appendChild(owner);
-        var clear = $create('div');
-        clear.classList.add('clear');
-        entry.appendChild(clear);
-      }
+      RoomCreator.addMemberElement(room, user, container);
+    }
+  },
+  addMemberElement: (room, user, container) => {
+    var entry = $create('a');
+    container.appendChild(entry);
+    entry.classList.add('entry');
+    entry.classList.add('user');
+    var status = $create('input');
+    status.id = `userStatus_${user}`;
+    status.classList.add('property');
+    status.classList.add('status');
+    status.classList.add(room.status[user]);
+    entry.appendChild(status);
+    var name = $create('span');
+    name.classList.add('name');
+    entry.appendChild(name);
+    name.innerText = user;
+    if (user == room.owner) {
+      var owner = PropertyIcons.createOwnerUserIcon();
+      entry.appendChild(owner);
+      var clear = $create('div');
+      clear.classList.add('clear');
+      entry.appendChild(clear);
     }
   },
   createMessage: (data) => {
@@ -129,7 +140,7 @@ const RoomCreator = {
     message.classList.add('inner');
     message.title = createTimeString(data.timestamp);
     container.appendChild(message);
-    message.innerText = data.content;
+    message.innerHTML = linkify(data.content);
     chat.scrollTop = chat.scrollHeight;
   }
 }

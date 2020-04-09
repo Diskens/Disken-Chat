@@ -29,7 +29,7 @@
     height: calc(100vh - 1.5em - 14px);
   }
   #HomeSideBar {
-    background-color: #3338;
+    background-color: #333A;
     margin: 0 !important;
     padding-top: 2px;
   }
@@ -110,7 +110,7 @@
     right: 5px;
     width: 50%;
     min-height: 33vh;
-    background-color: #0004;
+    background-color: #333A;
   }
 
   .property {
