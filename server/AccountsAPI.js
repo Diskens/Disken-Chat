@@ -38,7 +38,18 @@ exports.AccountsApi = class AccountsApi {
     if (!result.success) return
     $LOG.entry('Accounts', `${result.username} disconnected`);
     var userRooms = (await $DATA.rooms.getUserRooms(result.username)).rooms;
-    for (var room of userRooms) $DATA.rooms.setUserStatus(room.ID, result.username, 0);
+    for (var room of userRooms) { // TODO
+      $DATA.rooms.setUserStatus(room.ID, result.username, 0);
+      if (!result.delta) return;
+      if (result.room.activeCount == 1 && result.delta > 0)
+      $DATA.history.activateRoom(data.roomID);
+      if (!result.room.activeCount)
+      $DATA.history.deactivateRoom(data.roomID);
+      for (var username of result.room.users) {
+        var comember = $DATA.accounts.sockets[username];
+        if (comember != undefined) comember.emit('RoomUserStatus', data);
+      }
+    }
   }
   async logout(socket, data) {
     var result = await $DATA.accounts.logout(socket.id, data);

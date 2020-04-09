@@ -66,7 +66,7 @@ exports.RoomsData = class RoomsData extends DataHolder {
     var current = room.status[username];
     var delta = 0;
     if (current == status) return {delta, room};
-    // $LOG.entry('Rooms', `Status of ${username} in #${roomID}: ${current} => ${status}`);
+    $LOG.entry('Rooms', `Status of ${username} in #${roomID}: ${current} => ${status}`);
     var update = {status:{}};
     update['status'][username] = status;
     await this.db.updateEntry({ID:roomID}, update);

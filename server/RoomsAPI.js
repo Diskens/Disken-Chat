@@ -65,6 +65,7 @@ exports.RoomsApi = class RoomsApi {
       var comember = $DATA.accounts.sockets[username];
       if (comember != undefined) comember.emit('RoomUserStatus', data);
     }
+    // TODO
   }
   async getChatHistory(socket, data) {
     $LOG.entry('Rooms', `Sending history of #${data.roomID} to ${data.username}`);
