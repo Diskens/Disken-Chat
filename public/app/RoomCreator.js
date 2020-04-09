@@ -3,7 +3,7 @@ function createTimeString(timestamp) {
   var now = Date.now();
   var today = new Date(now).toISOString().substring(0, 10);
   var msgDay = new Date(timestamp).toISOString().substring(0, 10);
-  if (today == msgDay) return new Date(timestamp).toISOString().substring(11, 16);
+  if (today == msgDay) return new Date(timestamp).toISOString().substring(11, 16) + ' UTC';
   return 'before last midnight (TODO)'; // TODO
 }
 

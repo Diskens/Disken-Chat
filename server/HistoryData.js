@@ -23,7 +23,6 @@ exports.HistoryData = class HistoryData {
   }
   async addMessage(data) {
     var {timestamp, username, roomID, content} = data;
-    $LOG.entry('History', `Adding history entry in room #${roomID}: "${content}"`);
     var message = {username, content};
     this.rooms[roomID].entry(['M', timestamp, username, content]);
   }
