@@ -55,7 +55,7 @@ exports.AccountsApi = class AccountsApi {
     var result = await $DATA.accounts.logout(socket.id, data);
     if (result.success)
       $LOG.entry('Accounts', `${data.username} logged out`);
-    var userRooms = (await $DATA.rooms.getUserRooms(data.username)).rooms;
+    var userRooms = (await $DATA.rooms.getUserRooms(result.username)).rooms;
     for (var room of userRooms) { // TODO
       var statusResult = $DATA.rooms.setUserStatus(room.ID, result.username, 0);
       if (!statusResult.delta) return;

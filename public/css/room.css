@@ -171,6 +171,7 @@
   border-radius: .5em;
   padding: 4px 6px;
 }
+.message .inner span, .message .inner a {white-space: pre-wrap;}
 .own {
   margin-left: calc(40% - 6px);
   margin-right: 7px;

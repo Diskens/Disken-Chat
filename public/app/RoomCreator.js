@@ -8,11 +8,35 @@ function createTimeString(timestamp) {
 }
 
 function linkify(text) {
-  // Method downloaded from https://stackoverflow.com/a/8943487/12987579
+  // Regex from https://stackoverflow.com/a/8943487/12987579
   var urlRegex =/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-  return text.replace(urlRegex, function(url) {
-    return '<a href="' + url + '" target="_blank">' + url + '</a>';
-  });
+  var words = text.split(' ');
+  links = [];
+  for (var word of words) {
+    if (word.match(urlRegex) == null) continue;
+    var index = text.indexOf(word);
+    links.push({link:true, start:index, end:index+word.length});
+  }
+  var sections = [];
+  var pointer = 0;
+  for (var link of links) {
+    if (pointer != link.start) sections.push(
+      {link:false, start:pointer, end:link.start});
+    sections.push(link);
+    pointer = link.end;
+  }
+  if (pointer != text.length) sections.push(
+    {link:false, start:pointer, end:text.length});
+  var elements = [];
+  for (var section of sections) {
+    var content = text.substring(section.start, section.end);
+    if (section.link) {
+      var element = $create('a'); element.href = content; element.target = '_blank';
+    } else { var element = $create('span'); }
+    element.innerText = content;
+    elements.push(element);
+  }
+  return elements;
 }
 
 const RoomCreator = {
@@ -140,7 +164,8 @@ const RoomCreator = {
     message.classList.add('inner');
     message.title = createTimeString(data.timestamp);
     container.appendChild(message);
-    message.innerHTML = linkify(data.content);
+    var textElements = linkify(data.content);
+    for (var element of textElements) message.appendChild(element);
     chat.scrollTop = chat.scrollHeight;
   }
 }

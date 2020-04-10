@@ -60,7 +60,7 @@ exports.AccountsData = class AccountsData extends DataHolder {
     if (user.sessionID != sessionID)
       return {success:false, reason:'Invalid session'};
     await this.db.updateEntry({username:data.username}, {isOnline:false, sessionID:null});
-    return {success:true};
+    return {success:true, username};
   }
   async signup(data) {
     // Length and characters check
