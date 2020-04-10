@@ -45,6 +45,9 @@ function API_SetRoomUserStatus(username, roomID, status) {
   $SOCKET.emit('RoomUserStatus', {username, roomID, status});
 }
 function On_RoomUserStatus(data) {
+  if (!$APP.initalized) return; // TODO
+  // If multiple users refresh page at once their status will not be received
+  // as the object where data is stored, is not yet created
   $APP.rooms[data.roomID].onUserStatus(data);
 }
 $SOCKET.on('RoomUserStatus', On_RoomUserStatus);

@@ -30,7 +30,6 @@ exports.RoomsApi = class RoomsApi {
   }
   async getUserRooms(socket, data) {
     var result = await global.$DATA.rooms.getUserRooms(data.username);
-    global.$LOG.entry('Rooms', `${data.username} gets their rooms list (${result.rooms.length})`);
     socket.emit('GetUserRooms', result);
   }
   async message(socket, data) {

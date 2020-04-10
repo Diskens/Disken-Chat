@@ -5,9 +5,13 @@ class Application {
     this.switchHomeSub('rooms');
     this.rooms = {};
     this.room = null;
+    this.initalized = false;
   }
   begin() {
     this.loadUserRooms();
+    setTimeout(function () {
+      API_Ping();
+    }, 10000);
   }
   loadUserRooms() {
     API_GetUserRooms($USER.username, $SOCKET.id);
@@ -22,6 +26,7 @@ class Application {
       var entry = RoomCreator.createListingEntry(room, () => {this.showRoom(room.ID);});
       container.appendChild(entry);
     }
+    this.initalized = true;
   }
   showRoom(id) {
     if (this.room) {

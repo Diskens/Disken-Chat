@@ -1,4 +1,9 @@
 
+// Keep socket connection aline
+function API_Ping() {
+  $SOCKET.emit('Ping');
+}
+
 // Credentials Login
 function API_CredsLogin(username, password, sessionID) {
   $SOCKET.emit('CredsLogin', {username, password, sessionID});
