@@ -1,38 +1,38 @@
 const $PORT = 80;
 const LOG_FN_TEMPLATE = 'logs/serverLogs_$DATE.txt';
 
-var $LOG, $APP;
-var $DATA={};
-
 const Log = require('./server/utilities/Logger.js').Logger;
 
-const Application = require('./server/utilities/Application.js').Application;
-const Meta = require('./server/utilities/Meta.js').Meta;
+const {Application} = require('./server/utilities/Application.js');
+const {Meta} = require('./server/utilities/Meta.js');
 
-const AccountsApi = require('./server/AccountsAPI.js').AccountsApi;
-const AccountsData = require('./server/AccountsData.js').AccountsData;
-const RoomsApi = require('./server/RoomsAPI.js').RoomsApi;
-const RoomsData = require('./server/RoomsData.js').RoomsData;
-const HistoryData = require('./server/HistoryData.js').HistoryData;
+const {AccountsApi} = require('./server/AccountsAPI.js');
+const {AccountsData} = require('./server/AccountsData.js');
+const {RoomsApi} = require('./server/RoomsAPI.js');
+const {RoomsData} = require('./server/RoomsData.js');
+const {StatusApi} = require('./server/StatusApi.js');
+const {HistoryData} = require('./server/HistoryData.js');
 
 async function main() {
-  $DATA.meta = new Meta('./data/meta.json');
-  $DATA.meta.reset();
-  $LOG = new Log(LOG_FN_TEMPLATE, $DATA.meta.getTzOffset());
-  $APP = new Application($LOG, $PORT, './public');
+  global.$DATA = {};
+  global.$DATA.meta = new Meta('./data/meta.json');
+  global.$DATA.meta.reset();
+  global.$LOG = new Log(LOG_FN_TEMPLATE, global.$DATA.meta.getTzOffset());
+  global.$APP = new Application($PORT, './public');
 
-  $LOG.newSession($DATA.meta);
+  global.$LOG.newSession(global.$DATA.meta);
 
-  $DATA.accounts = new AccountsData($LOG, $DATA.meta);
+  $DATA.accounts = new AccountsData();
   await $DATA.accounts.reset();
-  $DATA.rooms = new RoomsData($LOG, $DATA.meta);
+  $DATA.rooms = new RoomsData();
   await $DATA.rooms.reset();
-  $DATA.history = new HistoryData($LOG, $DATA.meta);
+  $DATA.history = new HistoryData();
 
-  $APP.addAPI(new AccountsApi($LOG, $DATA));
-  $APP.addAPI(new RoomsApi($LOG, $DATA));
+  global.$APP.addAPI('accounts', new AccountsApi());
+  global.$APP.addAPI('rooms', new RoomsApi());
+  global.$APP.addAPI('status', new StatusApi());
 
-  $APP.begin();
+  global.$APP.begin();
 }
 
 main();

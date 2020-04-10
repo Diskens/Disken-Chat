@@ -1,9 +1,7 @@
 const DataHolder = require('./utilities/DataHolder.js').DataHolder;
-var $LOG, $META;
 
 exports.RoomsData = class RoomsData extends DataHolder {
-  constructor(_log, _meta) {
-    $LOG = _log; $META = _meta;
+  constructor() {
     super('data/Rooms.json');
   }
   async reset() {
@@ -65,8 +63,7 @@ exports.RoomsData = class RoomsData extends DataHolder {
     var room = await this.db.asyncFindOne({ID:roomID})
     var current = room.status[username];
     var delta = 0;
-    if (current == status) return {delta, room};
-    $LOG.entry('Rooms', `Status of ${username} in #${roomID}: ${current} => ${status}`);
+    if (current == status) return {delta, previous:current, room};
     var update = {status:{}};
     update['status'][username] = status;
     await this.db.updateEntry({ID:roomID}, update);
@@ -74,14 +71,14 @@ exports.RoomsData = class RoomsData extends DataHolder {
       await this.decrActiveCount(room); room.activeCount -= 1; delta = -1; }
     if (current != 2 && status == 2) {
       await this.incrActiveCount(room); room.activeCount += 1; delta = 1; }
-    return {delta, room:this.cleanRoomData(room)}; // do not change room status
+    return {delta, previous:current, room:this.cleanRoomData(room)}; // do not change room status
   }
   async incrActiveCount(room) {
-    // $LOG.entry('Rooms', `Active in #${room.ID}: ${room.activeCount+1}`);
+    // global.$LOG.entry('Rooms', `Active in #${room.ID}: ${room.activeCount+1}`);
     await this.db.updateEntry({ID:room.ID}, {activeCount:room.activeCount+1});
   }
   async decrActiveCount(room) {
-    // $LOG.entry('Rooms', `Active in #${room.ID}: ${room.activeCount-1}`);
+    // global.$LOG.entry('Rooms', `Active in #${room.ID}: ${room.activeCount-1}`);
     await this.db.updateEntry({ID:room.ID}, {activeCount:room.activeCount-1});
   }
   async resetPasscode(roomID) {

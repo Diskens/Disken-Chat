@@ -1,9 +1,7 @@
 const DataHolder = require('./utilities/DataHolder.js').DataHolder;
-var $LOG, $META;
 
 exports.AccountsData = class AccountsData extends DataHolder {
-  constructor(_log, _meta) {
-    $LOG = _log; $META = _meta;
+  constructor() {
     super('data/Accounts.json');
     this.sockets = {};
   }
@@ -27,6 +25,17 @@ exports.AccountsData = class AccountsData extends DataHolder {
     delete user.sessionID;
     delete user._id;
     return user;
+  }
+  broadcast(usernames, key, data) {
+    var successes = [];
+    for (var username of usernames) {
+      var socket = this.sockets[username];
+      if (socket == undefined) continue;
+      socket.emit(key, data);
+      successes.push(username);
+    }
+    global.$LOG.entry('Accounts', `Broadcasted ${key} to ${successes}`);
+    return successes;
   }
 
   async credsLogin(socket, sessionID, data) {
@@ -59,8 +68,8 @@ exports.AccountsData = class AccountsData extends DataHolder {
     var user = await this.getUser(data.username);
     if (user.sessionID != sessionID)
       return {success:false, reason:'Invalid session'};
-    await this.db.updateEntry({username:data.username}, {isOnline:false, sessionID:null});
-    return {success:true, username};
+    await this.db.updateEntry({username:user.username}, {isOnline:false, sessionID:null});
+    return {success:true, username:user.username};
   }
   async signup(data) {
     // Length and characters check

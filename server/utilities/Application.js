@@ -1,5 +1,3 @@
-var $LOG;
-
 // Packages
 const http = require('http');
 const express = require('express');
@@ -11,8 +9,7 @@ const fs = require('fs');
 var Callbacks = {};
 
 exports.Application = class Application {
-  constructor(_log, port, publicDir, faviconFn='/favicon.ico') {
-    $LOG = _log;
+  constructor(port, publicDir, faviconFn='/favicon.ico') {
     this.express = express();
     this.express.use(express.static(publicDir));
     this.express.use(favicon(publicDir + faviconFn));
@@ -20,9 +17,10 @@ exports.Application = class Application {
     this.io = SocketIo.listen(this.server);
     this.server.listen(port);
     this.port = port;
+    global.$APIS = {};
   }
   begin() {
-    $LOG.entry('App', `Listening to *:${this.port}`);
+    global.$LOG.entry('App', `Listening to *:${this.port}`);
     this.io.on('connection', (socket) => {
       var entries = Object.entries(Callbacks);
       for (const [key, value] of entries) {
@@ -32,10 +30,12 @@ exports.Application = class Application {
       if (Callbacks['connection']) Callbacks['connection'](socket);
     });
   }
-  addAPI(api) {
-    for (var apiKey in api.callbacks) {
-      $LOG.entry('App', `Added API callback for "${apiKey}"`);
-      Callbacks[apiKey] = api.callbacks[apiKey];
+  addAPI(name, api) {
+    for (var [key, method] of Object.entries(api.callbacks)) {
+      global.$LOG.entry('App', `Added API callback for "${key}"`);
+      // Callbacks[apiKey] = api.callbacks[apiKey];
+      Callbacks[key] = method;
     }
+    global.$APIS[name] = api;
   }
 }

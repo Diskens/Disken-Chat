@@ -1,9 +1,6 @@
-var $LOG, $DATA;
 
 exports.AccountsApi = class AccountsApi {
-  // Creating and accessing the account
-  constructor(_log, _data) {
-    $LOG = _log; $DATA = _data;
+  constructor() {
     this.callbacks = {
       CredsLogin: this.credsLogin,
       CookieLogin: this.cookieLogin,
@@ -15,65 +12,45 @@ exports.AccountsApi = class AccountsApi {
   }
 
   async credsLogin(socket, data) {
-    var result = await $DATA.accounts.credsLogin(socket, socket.id, data);
+    var result = await global.$DATA.accounts.credsLogin(socket, socket.id, data);
     socket.emit('CredsLogin', result);
-    if (result.success)
-      $LOG.entry('Accounts', `${result.user.username} logged in`);
+    if (result.success) {
+      global.$LOG.entry('Accounts', `${result.user.username} logged in`);
+      await global.$APIS.status.setStatusAllRooms(result.user.username, 1);
+    }
   }
   async cookieLogin(socket, data) {
-    var result = await $DATA.accounts.cookieLogin(socket, socket.id, data);
+    var result = await global.$DATA.accounts.cookieLogin(socket, socket.id, data);
     socket.emit('CookieLogin', result);
-    if (result.success)
-      $LOG.entry('Accounts', `${result.user.username} reconnected`);
+    if (result.success) {
+      global.$LOG.entry('Accounts', `${result.user.username} reconnected`);
+      await global.$APIS.status.setStatusAllRooms(result.user.username, 1);
+    }
   }
   async connection(socket) {
-    var version = $DATA.meta.getVersion();
-    var release = $DATA.meta.getRelease();
+    var version = global.$DATA.meta.getVersion();
+    var release = global.$DATA.meta.getRelease();
     socket.emit('Connect', {version, release});
-    $DATA.meta.incrOnlineCount();
+    global.$DATA.meta.incrOnlineCount();
   }
   async disconnect(socket) {
-    $DATA.meta.decrOnlineCount();
-    var result = await $DATA.accounts.flagOffline(socket.id);
+    global.$DATA.meta.decrOnlineCount();
+    var result = await global.$DATA.accounts.flagOffline(socket.id);
     if (!result.success) return
-    $LOG.entry('Accounts', `${result.username} disconnected`);
-    var userRooms = (await $DATA.rooms.getUserRooms(result.username)).rooms;
-    for (var room of userRooms) { // TODO
-      var statusResult = $DATA.rooms.setUserStatus(room.ID, result.username, 0);
-      if (!statusResult.delta) return;
-      if (statusResult.room.activeCount == 1 && statusResult.delta > 0)
-      $DATA.history.activateRoom(data.roomID);
-      if (!statusResult.room.activeCount)
-      $DATA.history.deactivateRoom(data.roomID);
-      for (var username of statusResult.room.users) {
-        var comember = $DATA.accounts.sockets[username];
-        if (comember != undefined) comember.emit('RoomUserStatus', data);
-      }
-    }
+    global.$LOG.entry('Accounts', `${result.username} disconnected`);
+    await global.$APIS.status.setStatusAllRooms(result.username, 0);
   }
   async logout(socket, data) {
-    var result = await $DATA.accounts.logout(socket.id, data);
+    var result = await global.$DATA.accounts.logout(socket.id, data);
     if (result.success)
-      $LOG.entry('Accounts', `${data.username} logged out`);
-    var userRooms = (await $DATA.rooms.getUserRooms(result.username)).rooms;
-    for (var room of userRooms) { // TODO
-      var statusResult = $DATA.rooms.setUserStatus(room.ID, result.username, 0);
-      if (!statusResult.delta) return;
-      if (statusResult.room.activeCount == 1 && statusResult.delta > 0)
-      $DATA.history.activateRoom(data.roomID);
-      if (!statusResult.room.activeCount)
-      $DATA.history.deactivateRoom(data.roomID);
-      for (var username of statusResult.room.users) {
-        var comember = $DATA.accounts.sockets[username];
-        if (comember != undefined) comember.emit('RoomUserStatus', data);
-      }
-    }
+      global.$LOG.entry('Accounts', `${data.username} logged out`);
     socket.emit('Logout', result);
+    await global.$APIS.status.setStatusAllRooms(result.username, 0);
   }
   async signup(socket, data) {
-    var result = await $DATA.accounts.signup(data);
+    var result = await global.$DATA.accounts.signup(data);
     if (result.success)
-      $LOG.entry('Accounts', `${data.username} signed up`);
+      global.$LOG.entry('Accounts', `${data.username} signed up`);
     socket.emit('Signup', result);
   }
 }
