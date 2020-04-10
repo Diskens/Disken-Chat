@@ -15,6 +15,7 @@ class Room {
     this.active = false;
     this.messages = [];
     this.initalized = false;
+    this.lastSender = '';
   }
   show() {
     var container = $id('RoomContainer');
@@ -28,7 +29,7 @@ class Room {
     if (!this.initalized) {
       if (this.history) API_GetChatHistory($USER.username, this.ID);
     }
-    for (var message of this.messages) RoomCreator.createMessage(message);
+    for (var message of this.messages) RoomCreator.createMessage(this, message);
   }
   hide() {
     var room = $APP.room;
@@ -62,11 +63,11 @@ class Room {
     this.messages = data;
     this.initalized = true;
     if (this.active) {
-      for (var message of this.messages) RoomCreator.createMessage(message); }
+      for (var message of this.messages) RoomCreator.createMessage(this, message); }
   }
   onMessage(data) {
     console.log('Message', data);
-    if (this.active) RoomCreator.createMessage(data);
+    if (this.active) RoomCreator.createMessage(this, data);
     this.messages.push(data);
   }
   sendMessage() {

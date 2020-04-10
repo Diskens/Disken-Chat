@@ -148,21 +148,23 @@ const RoomCreator = {
       entry.appendChild(clear);
     }
   },
-  createMessage: (data) => {
+  createMessage: (room, data) => {
     var chat = $id('ChatContent');
     var container = $create('div');
     if (data.username == $USER.username) container.classList.add('own');
     chat.appendChild(container);
     container.classList.add('message');
-    if (data.username != $USER.username) {
+    if (data.username != $USER.username ) {
       var user = $create('span');
       user.classList.add('user');
-      user.innerText = data.username;
+      if (data.username != room.lastSender) user.innerText = data.username;
+      else user.innerText = '   ';
+      room.lastSender = data.username;
       container.appendChild(user);
     }
     var message = $create('span');
     message.classList.add('inner');
-    message.title = createTimeString(data.timestamp);
+    message.title = data.username + ', ' + createTimeString(data.timestamp);
     container.appendChild(message);
     var textElements = linkify(data.content);
     for (var element of textElements) message.appendChild(element);

@@ -183,4 +183,5 @@
 
 .message .user {
   color: #FFF8;
+  white-space: pre-wrap;
 }
