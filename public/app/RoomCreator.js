@@ -159,9 +159,9 @@ const RoomCreator = {
       user.classList.add('user');
       if (data.username != room.lastSender) user.innerText = data.username;
       else user.innerText = '   ';
-      room.lastSender = data.username;
       container.appendChild(user);
     }
+    room.lastSender = data.username;
     var message = $create('span');
     message.classList.add('inner');
     message.title = data.username + ', ' + createTimeString(data.timestamp);
