@@ -68,6 +68,7 @@ const RoomCreator = {
     header.id = 'RoomHeader';
     container.appendChild(header);
     var title = $create('p');
+    title.classList.add('roomName');
     title.innerText = room.name;
     header.appendChild(title);
     var hide = $create('button');

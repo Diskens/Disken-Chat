@@ -62,7 +62,7 @@
   text-align: left;
   border-bottom: 1px solid #CCC;
 }
-#RoomHeader p { float: left; margin: .2em 0; }
+#RoomHeader .roomName { float: left; margin: .2em 0; }
 #RoomHeader button {
   float: right;
   padding: 0px;
@@ -127,7 +127,6 @@
 }
 
 .property {
-  display: inline-block;
   float: right;
   padding: 0px;
   margin: 0px 2px;
