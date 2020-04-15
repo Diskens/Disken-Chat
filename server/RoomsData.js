@@ -54,7 +54,7 @@ exports.RoomsData = class RoomsData extends DataHolder {
     var room = await this.db.asyncFindOne({name:roomName});
     if (room == undefined)
       return {success:false, reason:'Room with this name does not exist'};
-    if (room.passcode != passcode)
+    if (room.passcode != passcode && !room.isPublic)
       return {success:false, reason:'Incorrect passcode'};
     await this.db.update({ID:room.ID}, {$push: {users:username}});
     return {success:true, room:this.cleanRoomData(room)};
