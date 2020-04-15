@@ -13,6 +13,7 @@ exports.AccountsData = class AccountsData extends DataHolder {
   async flagOffline(sessionID) {
     var user = await this.db.asyncFindOne({sessionID});
     if (user == undefined) return {success:false};
+    delete this.sockets[user.username];
     await this.db.updateEntry({username:user.username}, {isOnline:false});
     return {success:true, username:user.username};
   }
