@@ -127,6 +127,7 @@
 }
 
 .property {
+  display: inline-block;
   float: right;
   padding: 0px;
   margin: 0px 2px;
