@@ -20,7 +20,7 @@ class Application {
     var container = $id('HomeSubRooms').childNodes[2];
     removeChildren(container);
     for (var data of rooms) {
-      var room = new Room(data);
+      const room = new Room(data);
       API_SetRoomUserStatus($USER.username, room.ID, 'away');
       this.rooms[room.ID] = room;
       var entry = RoomCreator.createListingEntry(room, () => {this.showRoom(room.ID);});
