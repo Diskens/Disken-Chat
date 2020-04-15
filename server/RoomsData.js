@@ -42,7 +42,7 @@ exports.RoomsData = class RoomsData extends DataHolder {
       if (name.includes(char))
         return {success:false, reason:'Username contains invalid character'}; }
     var room = {
-      ID:$META.getNextRoomID(), name, owner,
+      ID:global.$META.getNextRoomID(), name, owner,
       isPublic, history, users:[owner], status:{}, activeCount:0,
       passcode: this.generatePasscode()
     };
