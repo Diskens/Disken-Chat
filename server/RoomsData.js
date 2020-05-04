@@ -1,4 +1,5 @@
 const DataHolder = require('./utilities/DataHolder.js').DataHolder;
+const stru = require('./utilities/StringUtils.js');
 
 exports.RoomsData = class RoomsData extends DataHolder {
   constructor() {
@@ -34,13 +35,10 @@ exports.RoomsData = class RoomsData extends DataHolder {
 
   async createRoom(data) {
     var {owner, name, isPublic, history} = data;
-    if (name.length < 4)
-      return {success:false, reason:'Name must be at least 4 characters long'};
-    if (name.length > 25)
-      return {success:false, reason:"Name can be at least 25 characters long"};
-    for (var char of '<>{}[](),./?;\':"-=_+\\!@$%^&*`~|') {
-      if (name.includes(char))
-        return {success:false, reason:'Username contains invalid character'}; }
+    if (!stru.isOfLength(name, 3, 24))
+      return {success:false, reason:'Name must be of length 3-24 characters'};
+    if (!stru.isLegalName(name))
+      return {success:false, reason:'Name contains invalid characters'};
     var room = {
       ID:global.$DATA.meta.getNextRoomID(), name, owner,
       isPublic, history, users:[owner], status:{}, activeCount:0,
@@ -82,6 +80,8 @@ exports.RoomsData = class RoomsData extends DataHolder {
     await this.db.updateEntry({ID:room.ID}, {activeCount:room.activeCount-1});
   }
   async resetPasscode(roomID) {
-    await this.db.updateEntry({ID:roomID}, {passcode:this.generatePasscode()});
+    var passcode = this.generatePasscode();
+    await this.db.updateEntry({ID:roomID}, {passcode});
+    return {passcode};
   }
 }

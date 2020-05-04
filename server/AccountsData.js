@@ -35,7 +35,6 @@ exports.AccountsData = class AccountsData extends DataHolder {
       socket.emit(key, data);
       successes.push(username);
     }
-    global.$LOG.entry('Accounts', `Broadcasted ${key} to ${successes}`);
     return successes;
   }
 
@@ -74,21 +73,19 @@ exports.AccountsData = class AccountsData extends DataHolder {
   }
   async signup(data) {
     // Length and characters check
-    if (data.username.length < 3 || data.username.length > 16)
-      return {success:false, reason:'Username length must be between 3 and 16'};
-    if (data.password.length < 6)
-      return {success:false, reason:'Password must be at least 6 characters long'};
-    for (var char of '<>{}[](),./?;\':"-=_+\\!@$%^&*`~|') {
-      if (data.username.includes(char))
-        return {success:false, reason:'Username contains invalid character'};
-    }
+    if (!stru.isOfLength(data.username, 3, 24))
+      return {success:false, reason:'Username must be of length 3-24 characters'};
+    if (!stru.isLegalName(data.username))
+      return {success:false, reason:'Username contains invalid characters'};
+    if (!stru.isOfLength(data.password, 6, 63))
+      return {success:false, reason:'Password must be of length 6-63 characters'};
     // Username taken check
     var existingUser = await this.getUser(data.username);
     if (existingUser != undefined)
       return {success:false, reason:'Username already taken'};
     // Insert
     await this.db.insert({ username:data.username, password:data.password,
-      accountCreated: Date.now(), color: '#631F50',
+      accountCreated: Date.now(),
       isOnline:false, sessionID:null,
       unreadRooms: []
     });
