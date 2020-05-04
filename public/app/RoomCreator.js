@@ -151,17 +151,16 @@ const RoomCreator = {
   },
   createMessage: (room, data) => {
     var chat = $id('ChatContent');
+    if (data.username != $USER.username && data.username != room.lastSender) {
+      var user = $create('div');
+      user.classList.add('user');
+      user.innerText = data.username;
+      chat.appendChild(user);
+    }
     var container = $create('div');
     if (data.username == $USER.username) container.classList.add('own');
     chat.appendChild(container);
     container.classList.add('message');
-    if (data.username != $USER.username ) {
-      var user = $create('span');
-      user.classList.add('user');
-      if (data.username != room.lastSender) user.innerText = data.username;
-      else user.innerText = '   ';
-      container.appendChild(user);
-    }
     room.lastSender = data.username;
     var message = $create('span');
     message.classList.add('inner');

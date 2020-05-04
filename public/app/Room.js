@@ -39,6 +39,7 @@ class Room {
     $id('RoomMembers').hidden = true;
     API_SetRoomUserStatus($USER.username, room.ID, 'away');
     room.active = false;
+    room.lastSender = '';
   }
   onUserStatus(data) {
     if (!this.active) return;
