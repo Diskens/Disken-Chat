@@ -1,4 +1,5 @@
 const DataHolder = require('./utilities/DataHolder.js').DataHolder;
+const stru = require('./utilities/StringUtils.js');
 
 exports.AccountsData = class AccountsData extends DataHolder {
   constructor() {
