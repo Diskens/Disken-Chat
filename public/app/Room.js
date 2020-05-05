@@ -79,7 +79,14 @@ class Room {
     API_SendReaction($USER.username, this.ID, messageID);
   }
   onReaction(data) {
-    RoomCreator.addReaction(this, data);
+    var index = 0; var found = false;
+    for (var message of this.messages) {
+      if (message.ID == data.ID) {found = true; break;}
+      index += 1;
+    }
+    if (!found) { console.error('Message not found'); return; }
+    this.messages[index].reactions = data.reactions;
+    RoomCreator.updateReaction(this, data);
   }
   resetPasscode() {
     API_ResetPasscode($APP.room.ID);

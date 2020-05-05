@@ -150,6 +150,7 @@ const RoomCreator = {
     }
   },
   createMessage: (room, data) => {
+    if (!room.active) return;
     var chat = $id('ChatContent');
     if (data.username != $USER.username && data.username != room.lastSender) {
       var user = $create('div');
@@ -161,8 +162,6 @@ const RoomCreator = {
     var container = $create('div');
     container.id = `msg_${data.ID}`;
     container.classList.add('message');
-    if (room.history)
-      container.ondblclick = (evt) => {room.sendReaction(data.ID);};
     if (data.username == $USER.username)
       container.classList.add('own');
     chat.appendChild(container);
@@ -172,31 +171,25 @@ const RoomCreator = {
     container.appendChild(message);
     var textElements = linkify(data.content);
     for (var element of textElements) message.appendChild(element);
-    var reactions = $create('span');
-    reactions.classList.add('reactions');
-    reactions.title = data.reactions.join(', ');
-    reactions.innerText = !data.reactions.length ? '' : data.reactions.length;
-    RoomCreator.markOwnReaction(reactions, data.reactions);
-    container.appendChild(reactions);
+    if (room.history) { // NOTE
+      var reactions = $create('span');
+      reactions.onclick = (evt) => {room.sendReaction(data.ID);};
+      reactions.classList.add('reactions');
+      container.appendChild(reactions);
+      RoomCreator.updateReaction(room, data);
+    }
     chat.scrollTop = chat.scrollHeight;
   },
-  addReaction: (room, data) => {
-    var container = $id(`msg_${data.messageID}`);
+  updateReaction: (room, data) => {
+    if (!room.active) return;
+    var container = $id(`msg_${data.ID}`);
     var reaction = container.getElementsByClassName('reactions')[0];
-    var count = parseInt(reaction.innerText);
-    if (isNaN(count)) count = 0;
-    reaction.innerText = count + data.change;
-    if (count + data.change == 0) reaction.innerText = '';
-    var currentReactions = reaction.title.split(', ');
-    if (currentReactions[0] == '') currentReactions.splice(0, 1);
-    if (data.change == -1) {
-      var index = currentReactions.indexOf(data.username);
-      currentReactions.splice(index, 1);
-    } else {
-      currentReactions.push(data.username);
-    }
-    RoomCreator.markOwnReaction(reaction, currentReactions);
-    reaction.title = currentReactions.join(', ');
+    reaction.innerText = data.reactions.length;
+    reaction.title = data.reactions.join(', ');
+    if (!data.reactions.length) reaction.classList.add('noReaction');
+    else reaction.classList.remove('noReaction');
+    if (data.reactions.includes($USER.username)) reaction.classList.add('ownReaction');
+    else reaction.classList.remove('ownReaction');
   },
   markOwnReaction: (elm, reactions) => {
     if (reactions.includes($USER.username)) elm.classList.add('ownReaction');

@@ -204,8 +204,12 @@
   background-repeat: no-repeat;
   overflow: visible;
   margin-left: 3px;
+  cursor: pointer;
 }
-
+.message .noReaction {
+  background-image: url('../images/heartOutline.png');
+  color: #0000;
+}
 .message .ownReaction {
   background-image: url('../images/heartOwn.png');
 }
