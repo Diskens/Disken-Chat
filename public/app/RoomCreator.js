@@ -217,7 +217,6 @@ const RoomCreator = {
     image.classList.add('chatimg');
     image.title = data.username + ', ' + createTimeString(data.timestamp);
     image.src = 'data:image/png;base64, ' + data.content;
-    console.log('Creating image with src', data.content);
     container.appendChild(image);
 
     if (room.history) { // NOTE

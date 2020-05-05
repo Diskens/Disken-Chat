@@ -106,7 +106,6 @@ class Room {
   }
   onSelectedFileLoaded(data) {
     data = data.substring('data:image/png;base64,'.length)
-    console.log('Sending image', data);
     API_SendImage($USER.username, this.ID, data);
   }
   onImageDropped(self, evt) {
