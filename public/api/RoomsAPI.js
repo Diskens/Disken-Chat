@@ -62,6 +62,15 @@ function On_Message(data) {
 $SOCKET.on('Message', On_Message);
 
 
+function API_SendImage(username, roomID, content) {
+  $SOCKET.emit('Image', {username, roomID, content});
+}
+function On_Image(data) {
+  $APP.room.onImage(data);
+}
+$SOCKET.on('Image', On_Image);
+
+
 function API_SendReaction(username, roomID, messageID) {
   $SOCKET.emit('Reaction', {username, roomID, ID:messageID});
 }

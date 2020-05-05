@@ -91,6 +91,7 @@ const RoomCreator = {
     var chat = $create('div');
     chat.id = 'ChatContent';
     container.appendChild(chat);
+    chat.ondrop = (evt) => {room.onImageDropped(room, evt);};
     var spacer = $create('div');
     spacer.style.height = '2em';
     chat.appendChild(spacer);
@@ -101,6 +102,19 @@ const RoomCreator = {
     addEventListener('keydown',
       (evt) => { if (evt.key == 'Enter') $APP.room.sendMessage(); });
     container.appendChild(input);
+    var mediaContainer = $create('div');
+    mediaContainer.classList.add('upload');
+    container.appendChild(mediaContainer);
+    var media = $create('input');
+    media.id = 'MediaInput';
+    media.type = 'file';
+    media.accept = "image/*";
+    media.classList.add('upload');
+    media.onchange = (evt) => {room.onImageSelected(room, evt)};
+    mediaContainer.appendChild(media);
+    var clear = $create('div');
+    clear.classList.add('clear');
+    container.appendChild(clear);
   },
   createOptionsElements: (room, container) => {
     var options = $create('div');
@@ -150,6 +164,7 @@ const RoomCreator = {
     }
   },
   createMessage: (room, data) => {
+    // TODO: Refactor this if more message types are added
     if (!room.active) return;
     var chat = $id('ChatContent');
     if (data.username != $USER.username && data.username != room.lastSender) {
@@ -171,6 +186,40 @@ const RoomCreator = {
     container.appendChild(message);
     var textElements = linkify(data.content);
     for (var element of textElements) message.appendChild(element);
+    if (room.history) { // NOTE
+      var reactions = $create('span');
+      reactions.onclick = (evt) => {room.sendReaction(data.ID);};
+      reactions.classList.add('reactions');
+      container.appendChild(reactions);
+      RoomCreator.updateReaction(room, data);
+    }
+    chat.scrollTop = chat.scrollHeight;
+  },
+  createImage: (room, data) => {
+    // TODO: Refactor this if more message types are added
+    if (!room.active) return;
+    var chat = $id('ChatContent');
+    if (data.username != $USER.username && data.username != room.lastSender) {
+      var user = $create('div');
+      user.classList.add('user');
+      user.innerText = data.username;
+      chat.appendChild(user);
+    }
+    room.lastSender = data.username;
+    var container = $create('div');
+    container.id = `msg_${data.ID}`;
+    container.classList.add('message');
+    if (data.username == $USER.username)
+      container.classList.add('own');
+    chat.appendChild(container);
+
+    var image = $create('img');
+    image.classList.add('chatimg');
+    image.title = data.username + ', ' + createTimeString(data.timestamp);
+    image.src = 'data:image/png;base64, ' + data.content;
+    console.log('Creating image with src', data.content);
+    container.appendChild(image);
+
     if (room.history) { // NOTE
       var reactions = $create('span');
       reactions.onclick = (evt) => {room.sendReaction(data.ID);};

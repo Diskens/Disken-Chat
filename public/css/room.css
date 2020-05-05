@@ -16,13 +16,13 @@
     #RoomHeader .property { width: 50px; }
     #RoomHeader button { width: 100px; }
     #ChatContent { height: calc(100vh - 6em - 18px); }
-    #ChatInput { width: calc(100% - 35px); margin-left: 35px; font-size: 1.5em; }
+    #ChatInput { width: calc(100% - 35px - 40px); margin-left: 35px; font-size: 1.5em; }
   }
   @media screen and (max-resolution: 119dpi) {
     #RoomHeader .property { width: 23px; }
     #RoomHeader button { width: 50px; }
     #ChatContent { height: calc(100vh - 5.5em - 18px); }
-    #ChatInput { width: calc(100% - 28px); margin-left: 28px; }
+    #ChatInput { width: calc(100% - 28px - 40px); margin-left: 28px; }
   }
 }
 @media only screen and (min-width: 951px) and (max-resolution: 119dpi) {
@@ -30,7 +30,7 @@
   #HomeSideBar { width: 400px; }
   #SectionHome button#HomeSideBarToggle { display: none; }
   #ChatContent { height: calc(100vh - 5.5em - 18px); }
-  #ChatInput { width: 100%; }
+  #ChatInput { width: calc(100% - 40px); }
   #RoomHeader .property { width: 23px; }
   #RoomHeader button { width: 50px;
   }
@@ -76,15 +76,44 @@
   overflow-y: scroll;
 }
 #ChatInput {
+  display: block; float: left;
+  margin: 0;
   text-align: left;
   border-radius: 0;
-  padding: 4px 6px;
+  padding: 7px 6px;
   background-color: #000A;
   opacity: .85;
 }
 #ChatInput:focus {
   opacity: 1;
 }
+
+
+input.upload {
+  opacity: 0;
+  position: relative;
+  left: -5px; top: -5px;
+  width: 40px;
+  font-size: 22px;
+  cursor: pointer !important;
+}
+div.upload {
+  background-color: #5558;
+  background-image: url('../images/plus.png');
+  background-attachment: local;
+  background-position: center;
+  background-size: 50%;
+  background-repeat: no-repeat;
+  background-origin: content-box;
+  padding: 5px;
+  width: 40px;
+  height: calc(1em + 17px);
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer !important;
+}
+
 
 .HomeSideSub {
   text-align: left;
@@ -179,6 +208,10 @@
 }
 .own .inner {
   background-color: #5558;
+}
+
+.chatimg {
+  max-width: 100%;
 }
 
 #ChatContent .user {

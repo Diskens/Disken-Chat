@@ -16,6 +16,14 @@ class Room {
     this.messages = [];
     this.initalized = false;
     this.lastSender = '';
+    this.fileReader = new FileReader();
+    this.fileReader.onload = ()=>{this.onSelectedFileLoaded(this.fileReader.result)};
+  }
+  showStoredMessages() {
+    for (var entry of this.messages) {
+      if (entry.entryType == 'M') RoomCreator.createMessage(this, entry);
+      else if (entry.entryType == 'I') RoomCreator.createImage(this, entry);
+    }
   }
   show() {
     var container = $id('RoomContainer');
@@ -29,7 +37,7 @@ class Room {
     if (!this.initalized) {
       if (this.history) API_GetChatHistory($USER.username, this.ID);
     }
-    for (var message of this.messages) RoomCreator.createMessage(this, message);
+    this.showStoredMessages();
   }
   hide() {
     var room = $APP.room;
@@ -62,8 +70,8 @@ class Room {
   onChatHistory(data) {
     this.messages = data;
     this.initalized = true;
-    if (this.active) {
-      for (var message of this.messages) RoomCreator.createMessage(this, message); }
+    if (!this.active) return;
+    this.showStoredMessages();
   }
   onMessage(data) {
     if (this.active) RoomCreator.createMessage(this, data);
@@ -87,6 +95,35 @@ class Room {
     if (!found) { console.error('Message not found'); return; }
     this.messages[index].reactions = data.reactions;
     RoomCreator.updateReaction(this, data);
+  }
+  onImageSelected(self, evt) {
+    popup('Image selected');
+    var files = evt.target.files;
+    if (!files.length) return;
+    var file = files[0];
+    var reader = new FileReader();
+    self.fileReader.readAsDataURL(file);
+  }
+  onSelectedFileLoaded(data) {
+    data = data.substring('data:image/png;base64,'.length)
+    console.log('Sending image', data);
+    API_SendImage($USER.username, this.ID, data);
+  }
+  onImageDropped(self, evt) {
+    /* This method is based on example from
+    https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop
+    Section "Process the drop" */
+    if (!evt.dataTransfer.items) return;
+    for (var i = 0; i < evt.dataTransfer.items.length; i++) {
+      if (evt.dataTransfer.items[i].kind === 'file') {
+        var file = evt.dataTransfer.items[i].getAsFile();
+        self.onSelectedFileLoaded(file);
+      }
+    }
+  }
+  onImage(data) {
+    if (this.active) RoomCreator.createImage(this, data);
+    this.messages.push(data);
   }
   resetPasscode() {
     API_ResetPasscode($APP.room.ID);
