@@ -6,6 +6,7 @@ exports.RoomsApi = class RoomsApi {
       JoinRoom: this.joinRoom,
       GetUserRooms: this.getUserRooms,
       Message: this.message,
+      Image: this.image,
       Reaction: this.reaction,
       RoomUserStatus: this.roomUserStatus,
       GetChatHistory: this.getChatHistory,
@@ -41,6 +42,17 @@ exports.RoomsApi = class RoomsApi {
     if (room.history)
       global.$DATA.history.addMessage(data);
     global.$DATA.accounts.broadcast(room.users, 'Message', data);
+  }
+  async image(socket, data) {
+    // NOTE / TODO: In case more features are needed this needs refactor
+    // unified "onNewEntry" method should be created but for now this is good enough
+    data.timestamp = Date.now();
+    data.reactions = [];
+    var room = await global.$DATA.rooms.getRoom(data.roomID);
+    data.ID = await global.$DATA.rooms.getNextMessageID(room);
+    if (room.history)
+      global.$DATA.history.addImage(data);
+    global.$DATA.accounts.broadcast(room.users, 'Image', data);
   }
   async reaction(socket, data) {
     var room = await global.$DATA.rooms.getRoom(data.roomID);

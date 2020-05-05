@@ -1,6 +1,8 @@
 const RHF = require('./utilities/RHF.js').RHF;
+const fs = require('fs');
 
 function makeFilename(roomID) { return `data/history/room_${roomID}.rhf`; }
+function makeImgFilename(roomID, msgID) { return `data/images/img_${roomID}_${msgID}`; }
 
 exports.HistoryData = class HistoryData {
   constructor() {
@@ -25,9 +27,16 @@ exports.HistoryData = class HistoryData {
   }
   addMessage(data) {
     var {ID, timestamp, username, roomID, content} = data;
-    var message = {username, content};
     global.$DATA.history.rooms[roomID].entry(['M', ID, timestamp, username,
       [/*reactions*/], content]);
+  }
+  addImage(data) {
+    var {ID, timestamp, username, roomID, content} = data;
+    var filename = makeImgFilename(roomID, ID);
+    global.$DATA.history.rooms[roomID].entry(['I', ID, timestamp, username,
+      [/*reactions*/], filename]);
+    var stream = fs.createWriteStream(filename, {flags:'w'});
+    stream.write(content);
   }
   addReaction(data) {
     global.$LOG.entry('History', `${data.username} reacted to message in #${data.roomID}`);

@@ -1,6 +1,10 @@
 const FileStream = require('../utilities/FileStream').FileStream;
 const fs = require('fs');
 
+let bufferToB64 = (content) => {
+  return Buffer.from(content, 'binary').toString('base64');
+}
+
 // Writer class for Room History File format
 exports.RHF = class RHF extends FileStream {
   constructor(filename) {
@@ -31,6 +35,8 @@ exports.RHF = class RHF extends FileStream {
       timestamp = parseInt(timestamp);
       reactions = reactions.split(',');
       if (reactions[0] == '') reactions.splice(0, 1);
+      if (entryType == 'I')
+        content = bufferToB64(fs.readFileSync(content, 'binary'));
       data.push({entryType, ID, timestamp, username, reactions, content});
     }
     return data;
