@@ -42,7 +42,7 @@ exports.RoomsData = class RoomsData extends DataHolder {
     var room = {
       ID:global.$DATA.meta.getNextRoomID(), name, owner,
       isPublic, history, users:[owner], status:{}, activeCount:0,
-      passcode: this.generatePasscode()
+      messagesCount:0, passcode: this.generatePasscode()
     };
     room.status[owner] = 1;
     await this.db.insert(room);
@@ -56,6 +56,11 @@ exports.RoomsData = class RoomsData extends DataHolder {
       return {success:false, reason:'Incorrect passcode'};
     await this.db.update({ID:room.ID}, {$push: {users:username}});
     return {success:true, room:this.cleanRoomData(room)};
+  }
+  async getNextMessageID(room) {
+    var ID = room.messagesCount + 1;
+    await this.db.updateEntry({ID:room.ID}, {messagesCount:ID});
+    return ID;
   }
   async setUserStatus(roomID, username, status) {
     var room = await this.db.asyncFindOne({ID:roomID})

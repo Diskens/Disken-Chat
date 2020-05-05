@@ -6,6 +6,7 @@ exports.RoomsApi = class RoomsApi {
       JoinRoom: this.joinRoom,
       GetUserRooms: this.getUserRooms,
       Message: this.message,
+      Reaction: this.reaction,
       RoomUserStatus: this.roomUserStatus,
       GetChatHistory: this.getChatHistory,
       ResetPasscode: this.resetPasscode
@@ -16,7 +17,7 @@ exports.RoomsApi = class RoomsApi {
     var result = await global.$DATA.rooms.createRoom(data);
     if (!result.success) return;
     if (result.room.history)
-      await global.$DATA.history.createRoom(result.room.ID);
+      global.$DATA.history.createRoom(result.room.ID);
     global.$LOG.entry('Rooms', `${data.owner} created room "${data.name}"`);
     socket.emit('CreateRoom', result);
   }
@@ -34,10 +35,19 @@ exports.RoomsApi = class RoomsApi {
   }
   async message(socket, data) {
     data.timestamp = Date.now();
+    data.reactions = [];
+    console.log('data', data);
     var room = await global.$DATA.rooms.getRoom(data.roomID);
+    data.ID = await global.$DATA.rooms.getNextMessageID(room);
     if (room.history)
-      await global.$DATA.history.addMessage(data);
+      global.$DATA.history.addMessage(data);
     global.$DATA.accounts.broadcast(room.users, 'Message', data);
+  }
+  async reaction(socket, data) {
+    var room = await global.$DATA.rooms.getRoom(data.roomID);
+    if (!room.history) return; // NOTE
+    data.change = global.$DATA.history.addReaction(data);
+    global.$DATA.accounts.broadcast(room.users, 'Reaction', data);
   }
   async roomUserStatus(socket, data) {
     var user = await global.$DATA.accounts.getUser(data.username);
@@ -49,7 +59,7 @@ exports.RoomsApi = class RoomsApi {
   }
   async getChatHistory(socket, data) {
     global.$LOG.entry('Rooms', `Sending history of #${data.roomID} to ${data.username}`);
-    var result = await global.$DATA.history.getChatHistory(data.roomID);
+    var result = global.$DATA.history.getChatHistory(data.roomID);
     socket.emit('ChatHistory', result);
   }
   async resetPasscode(socket, data) {

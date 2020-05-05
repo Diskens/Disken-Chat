@@ -6,7 +6,7 @@ exports.HistoryData = class HistoryData {
   constructor() {
     this.rooms = {};
   }
-  async createRoom(roomID) {
+  createRoom(roomID) {
     var filename = makeFilename(roomID);
     var rhf = RHF.create(makeFilename(roomID));
   }
@@ -23,12 +23,34 @@ exports.HistoryData = class HistoryData {
     global.$DATA.history.rooms[roomID].close();
     delete global.$DATA.history.rooms[roomID];
   }
-  async addMessage(data) {
-    var {timestamp, username, roomID, content} = data;
+  addMessage(data) {
+    var {ID, timestamp, username, roomID, content} = data;
     var message = {username, content};
-    global.$DATA.history.rooms[roomID].entry(['M', timestamp, username, content]);
+    global.$DATA.history.rooms[roomID].entry(['M', ID, timestamp, username,
+      /*reactions*/[], content]);
   }
-  async getChatHistory(roomID) {
+  addReaction(data) {
+    var filename = makeFilename(data.roomID);
+    var history = RHF.read(filename);
+    var line = 0;
+    for (var entry of history) {
+      if (entry.ID == data.messageID) break;
+      line += 1;
+    }
+    var reactions = history[line].reactions;
+    var change = 1;
+    if (reactions.includes(data.username)) {
+      var index = reactions.indexOf(data.username);
+      reactions.splice(index, 1);
+      change = -1;
+    } else {
+      reactions.push(data.username);
+    }
+    global.$DATA.history.rooms[data.roomID].replace(filename, line, 4,
+      reactions.join(','));
+    return change;
+  }
+  getChatHistory(roomID) {
     var history = RHF.read(makeFilename(roomID));
     return history;
   }

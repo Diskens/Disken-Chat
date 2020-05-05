@@ -11,16 +11,27 @@ exports.RHF = class RHF extends FileStream {
     var data = data.join('|');
     this.append(data+'\n');
   }
+  replace(filename, line, column, data) {
+    var current = fs.readFileSync(filename, 'utf8').split('\n');
+    var entry = current[line].split('|');
+    entry[column] = data;
+    current[line] = entry.join('|');
+    var stream = fs.createWriteStream(filename, {flags:'w'});
+    stream.write(current.join('\n'));
+  }
   static read(filename) {
     var raw = fs.readFileSync(filename, 'utf8');
     var entries = raw.split('\n');
     var data = [];
     for (var entry of entries) {
       var line = entry.split('|');
-      var [entryType, timestamp, username, content] = entry.split('|');
+      var [entryType, ID, timestamp, username, reactions, content] = entry.split('|');
       if (entryType == '') continue;
+      ID = parseInt(ID);
       timestamp = parseInt(timestamp);
-      data.push({entryType, timestamp, username, content});
+      reactions = reactions.split(',');
+      if (reactions[0] == '') reactions.splice(0, 1);
+      data.push({entryType, ID, timestamp, username, reactions, content});
     }
     return data;
   }
