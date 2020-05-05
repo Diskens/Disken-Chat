@@ -45,7 +45,7 @@ exports.RoomsApi = class RoomsApi {
   async reaction(socket, data) {
     var room = await global.$DATA.rooms.getRoom(data.roomID);
     if (!room.history) return; // NOTE
-    data.change = global.$DATA.history.addReaction(data);
+    Object.assign(data, global.$DATA.history.addReaction(data));
     global.$DATA.accounts.broadcast(room.users, 'Reaction', data);
   }
   async roomUserStatus(socket, data) {

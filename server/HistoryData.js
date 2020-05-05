@@ -30,12 +30,12 @@ exports.HistoryData = class HistoryData {
       [/*reactions*/], content]);
   }
   addReaction(data) {
-    global.$LOG.entry('History', `${data.username} reacted to message in #${roomID}`);
+    global.$LOG.entry('History', `${data.username} reacted to message in #${data.roomID}`);
     var filename = makeFilename(data.roomID);
     var history = RHF.read(filename);
     var line = 0;
     for (var entry of history) {
-      if (entry.ID == data.messageID) break;
+      if (entry.ID == data.ID) break;
       line += 1;
     }
     var reactions = history[line].reactions;
@@ -49,7 +49,7 @@ exports.HistoryData = class HistoryData {
     }
     global.$DATA.history.rooms[data.roomID].replace(filename, line, 4,
       reactions.join(','));
-    return change;
+    return {change, reactions};
   }
   getChatHistory(roomID) {
     var history = RHF.read(makeFilename(roomID));
