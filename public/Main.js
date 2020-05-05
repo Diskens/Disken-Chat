@@ -4,6 +4,7 @@ var $USER, $APP;
 var $DOM_SECTIONS;
 
 function onload() {
+  disableOndropFileOpen();
   $APP = new Application();
   // Restore session from cookies
   cookieLogin()
@@ -25,4 +26,16 @@ function cookieLogin() {
   var username = getCookie('Username');
   var sessionID = getCookie('SessionID');
   API_CookieLogin(username, sessionID);
+}
+
+function disableOndropFileOpen() {
+  // https://stackoverflow.com/a/6756680/12987579
+  window.addEventListener("dragover", function(e){
+    e = e || event;
+    e.preventDefault();
+  }, false);
+  window.addEventListener("drop", function(e){
+    e = e || event;
+    e.preventDefault();
+  }, false);
 }
