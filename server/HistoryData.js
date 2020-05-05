@@ -15,11 +15,11 @@ exports.HistoryData = class HistoryData {
     if (room.activeCount == 1 && delta < 0) global.$DATA.history.deactivateRoom(room.ID);
   }
   activateRoom(roomID) {
-    global.$LOG.entry('History', `Activating room ${roomID}`);
+    global.$LOG.entry('History', `Activating #${roomID}`);
     global.$DATA.history.rooms[roomID] = new RHF(makeFilename(roomID));
   }
   deactivateRoom(roomID) {
-    global.$LOG.entry('History', `Deactivating room ${roomID}`);
+    global.$LOG.entry('History', `Deactivating #${roomID}`);
     global.$DATA.history.rooms[roomID].close();
     delete global.$DATA.history.rooms[roomID];
   }
@@ -27,9 +27,10 @@ exports.HistoryData = class HistoryData {
     var {ID, timestamp, username, roomID, content} = data;
     var message = {username, content};
     global.$DATA.history.rooms[roomID].entry(['M', ID, timestamp, username,
-      /*reactions*/[], content]);
+      [/*reactions*/], content]);
   }
   addReaction(data) {
+    global.$LOG.entry('History', `${data.username} reacted to message in #${roomID}`);
     var filename = makeFilename(data.roomID);
     var history = RHF.read(filename);
     var line = 0;

@@ -36,7 +36,6 @@ exports.RoomsApi = class RoomsApi {
   async message(socket, data) {
     data.timestamp = Date.now();
     data.reactions = [];
-    console.log('data', data);
     var room = await global.$DATA.rooms.getRoom(data.roomID);
     data.ID = await global.$DATA.rooms.getNextMessageID(room);
     if (room.history)

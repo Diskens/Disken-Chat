@@ -9,8 +9,8 @@ exports.StatusApi = class StatusApi {
   }
   async setStatus(username, room, status) {
     var result = await global.$DATA.rooms.setUserStatus(room.ID, username, status);
-    global.$LOG.entry('Status', `Status of ${username} in #${room.ID}: ${status} <delta ${result.delta}>`);
     if (result.previous == status) return;
+    global.$LOG.entry('Status', `Status of ${username} in #${room.ID}: ${status}`);
     global.$DATA.accounts.broadcast(room.users, 'RoomUserStatus',
       {roomID:room.ID, username, status:['offline', 'away', 'active'][status]});
     global.$DATA.history.activation(room, result.delta);
