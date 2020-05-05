@@ -189,3 +189,23 @@
   white-space: pre-wrap;
   font-size: .9em;
 }
+
+.message .reactions {
+  display: inline-block;
+  color: #000;
+  text-align: center;
+  min-width: 1.5em;
+  font-size: .9em;
+  font-weight: bold;
+  background-image: url('../images/heart.png');
+  background-attachment: local;
+  background-position: center;
+  background-size: 90%;
+  background-repeat: no-repeat;
+  overflow: visible;
+  margin-left: 3px;
+}
+
+.message .ownReaction {
+  background-image: url('../images/heartOwn.png');
+}

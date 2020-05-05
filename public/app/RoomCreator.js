@@ -157,17 +157,50 @@ const RoomCreator = {
       user.innerText = data.username;
       chat.appendChild(user);
     }
-    var container = $create('div');
-    if (data.username == $USER.username) container.classList.add('own');
-    chat.appendChild(container);
-    container.classList.add('message');
     room.lastSender = data.username;
+    var container = $create('div');
+    container.id = `msg_${data.ID}`;
+    container.classList.add('message');
+    if (room.history)
+      container.ondblclick = (evt) => {room.sendReaction(data.ID);};
+    if (data.username == $USER.username)
+      container.classList.add('own');
+    chat.appendChild(container);
     var message = $create('span');
     message.classList.add('inner');
     message.title = data.username + ', ' + createTimeString(data.timestamp);
     container.appendChild(message);
     var textElements = linkify(data.content);
     for (var element of textElements) message.appendChild(element);
+    var reactions = $create('span');
+    reactions.classList.add('reactions');
+    console.log('data', data);
+    reactions.title = data.reactions.join(', ');
+    reactions.innerText = !data.reactions.length ? '' : data.reactions.length;
+    RoomCreator.markOwnReaction(reactions, data.reactions);
+    container.appendChild(reactions);
     chat.scrollTop = chat.scrollHeight;
+  },
+  addReaction: (room, data) => {
+    var container = $id(`msg_${data.messageID}`);
+    var reaction = container.getElementsByClassName('reactions')[0];
+    var count = parseInt(reaction.innerText);
+    if (isNaN(count)) count = 0;
+    reaction.innerText = count + data.change;
+    if (count + data.change == 0) reaction.innerText = '';
+    var currentReactions = reaction.title.split(', ');
+    if (currentReactions[0] == '') currentReactions.splice(0, 1);
+    if (data.change == -1) {
+      var index = currentReactions.indexOf(data.username);
+      currentReactions.splice(index, 1);
+    } else {
+      currentReactions.push(data.username);
+    }
+    RoomCreator.markOwnReaction(reaction, currentReactions);
+    reaction.title = currentReactions.join(', ');
+  },
+  markOwnReaction: (elm, reactions) => {
+    if (reactions.includes($USER.username)) elm.classList.add('ownReaction');
+    else elm.classList.remove('ownReaction');
   }
 }

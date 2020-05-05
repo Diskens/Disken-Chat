@@ -60,14 +60,12 @@ class Room {
     element.title = statusTips[data.status];
   }
   onChatHistory(data) {
-    console.log('History', data);
     this.messages = data;
     this.initalized = true;
     if (this.active) {
       for (var message of this.messages) RoomCreator.createMessage(this, message); }
   }
   onMessage(data) {
-    console.log('Message', data);
     if (this.active) RoomCreator.createMessage(this, data);
     this.messages.push(data);
   }
@@ -76,6 +74,12 @@ class Room {
     if (!text.split(' ').join('').length) return;
     $id('ChatInput').value = '';
     API_SendMessage($USER.username, this.ID, text);
+  }
+  sendReaction(messageID) {
+    API_SendReaction($USER.username, this.ID, messageID);
+  }
+  onReaction(data) {
+    RoomCreator.addReaction(this, data);
   }
   resetPasscode() {
     API_ResetPasscode($APP.room.ID);

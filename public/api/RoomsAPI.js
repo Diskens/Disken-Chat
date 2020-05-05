@@ -62,6 +62,15 @@ function On_Message(data) {
 $SOCKET.on('Message', On_Message);
 
 
+function API_SendReaction(username, roomID, messageID) {
+  $SOCKET.emit('Reaction', {username, roomID, messageID});
+}
+function On_Reaction(data) {
+  $APP.room.onReaction(data);
+}
+$SOCKET.on('Reaction', On_Reaction);
+
+
 function API_GetChatHistory(username, roomID) {
   $SOCKET.emit('GetChatHistory', {username, roomID});
 }
