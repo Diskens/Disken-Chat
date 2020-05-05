@@ -174,7 +174,6 @@ const RoomCreator = {
     for (var element of textElements) message.appendChild(element);
     var reactions = $create('span');
     reactions.classList.add('reactions');
-    console.log('data', data);
     reactions.title = data.reactions.join(', ');
     reactions.innerText = !data.reactions.length ? '' : data.reactions.length;
     RoomCreator.markOwnReaction(reactions, data.reactions);
