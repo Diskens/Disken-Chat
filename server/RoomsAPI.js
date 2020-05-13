@@ -35,24 +35,25 @@ exports.RoomsApi = class RoomsApi {
     socket.emit('GetUserRooms', result);
   }
   async message(socket, data) {
-    data.timestamp = Date.now();
-    data.reactions = [];
-    var room = await global.$DATA.rooms.getRoom(data.roomID);
-    data.ID = await global.$DATA.rooms.getNextMessageID(room);
-    if (room.history)
-      global.$DATA.history.addMessage(data);
-    global.$DATA.accounts.broadcast(room.users, 'Message', data);
+    data.entryType = 'M';
+    global.$APIS.rooms.addChatEntry(socket, 'Message', data);
   }
   async image(socket, data) {
-    // NOTE / TODO: In case more features are needed this needs refactor
-    // unified "onNewEntry" method should be created but for now this is good enough
+    var headerLength = (data.content.indexOf(';')) + ('base64,'.length);
+    data.header = data.content.slice(0, headerLength);
+    data.content = data.content.slice(headerLength);
+
+    data.entryType = 'I';
+    global.$APIS.rooms.addChatEntry(socket, 'Image', data);
+  }
+  async addChatEntry(socket, broadcastKey, data) { // NOTE
     data.timestamp = Date.now();
     data.reactions = [];
     var room = await global.$DATA.rooms.getRoom(data.roomID);
     data.ID = await global.$DATA.rooms.getNextMessageID(room);
     if (room.history)
-      global.$DATA.history.addImage(data);
-    global.$DATA.accounts.broadcast(room.users, 'Image', data);
+      global.$DATA.history.addEntry(data.entryType, data);
+    global.$DATA.accounts.broadcast(room.users, broadcastKey, data);
   }
   async reaction(socket, data) {
     var room = await global.$DATA.rooms.getRoom(data.roomID);

@@ -1,8 +1,7 @@
-const RHF = require('./utilities/RHF.js').RHF;
+const RHF = require('./utilities/RHF.js');
 const fs = require('fs');
 
 function makeFilename(roomID) { return `data/history/room_${roomID}.rhf`; }
-function makeImgFilename(roomID, msgID) { return `data/images/img_${roomID}_${msgID}`; }
 
 exports.HistoryData = class HistoryData {
   constructor() {
@@ -10,7 +9,7 @@ exports.HistoryData = class HistoryData {
   }
   createRoom(roomID) {
     var filename = makeFilename(roomID);
-    var rhf = RHF.create(makeFilename(roomID));
+    var rhf = RHF.Parser.create(makeFilename(roomID));
   }
   activation(room, delta) {
     if (!room.activeCount && delta > 0) global.$DATA.history.activateRoom(room.ID);
@@ -18,30 +17,20 @@ exports.HistoryData = class HistoryData {
   }
   activateRoom(roomID) {
     global.$LOG.entry('History', `Activating #${roomID}`);
-    global.$DATA.history.rooms[roomID] = new RHF(makeFilename(roomID));
+    global.$DATA.history.rooms[roomID] = new RHF.Parser(makeFilename(roomID));
   }
   deactivateRoom(roomID) {
     global.$LOG.entry('History', `Deactivating #${roomID}`);
     global.$DATA.history.rooms[roomID].close();
     delete global.$DATA.history.rooms[roomID];
   }
-  addMessage(data) {
-    var {ID, timestamp, username, roomID, content} = data;
-    global.$DATA.history.rooms[roomID].entry(['M', ID, timestamp, username,
-      [/*reactions*/], content]);
-  }
-  addImage(data) {
-    var {ID, timestamp, username, roomID, content} = data;
-    var filename = makeImgFilename(roomID, ID);
-    global.$DATA.history.rooms[roomID].entry(['I', ID, timestamp, username,
-      [/*reactions*/], filename]);
-    var stream = fs.createWriteStream(filename, {flags:'w'});
-    stream.write(content);
+  addEntry(entryType, data) {
+    global.$DATA.history.rooms[data.roomID].entry(entryType, data);
   }
   addReaction(data) {
     global.$LOG.entry('History', `${data.username} reacted to message in #${data.roomID}`);
     var filename = makeFilename(data.roomID);
-    var history = RHF.read(filename);
+    var history = RHF.Parser.read(filename);
     var line = 0;
     for (var entry of history) {
       if (entry.ID == data.ID) break;
@@ -61,7 +50,7 @@ exports.HistoryData = class HistoryData {
     return {change, reactions};
   }
   getChatHistory(roomID) {
-    var history = RHF.read(makeFilename(roomID));
+    var history = RHF.Parser.read(makeFilename(roomID));
     return history;
   }
 }
