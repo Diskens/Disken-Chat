@@ -17,6 +17,7 @@ async function main() {
   global.$DATA = {};
   global.$DATA.meta = new Meta('./data/meta.json');
   global.$DATA.meta.reset();
+  // global.$DATA.meta.createEmpty('alpha', '0.3.0');
   global.$LOG = new Log(LOG_FN_TEMPLATE, global.$DATA.meta.getTzOffset());
   global.$APP = new Application($PORT, './public');
 
