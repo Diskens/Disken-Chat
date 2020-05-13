@@ -56,6 +56,7 @@ $SOCKET.on('Connect', On_Connect);
 // Logout
 function API_Logout(username) {
   $SOCKET.emit('Logout', {username});
+  if ($APP.room) $APP.room.hide();
 }
 function On_Logout(data) {
   $USER = undefined;
