@@ -18,7 +18,7 @@ class Application {
   }
   onUserRoomsLoaded(rooms) {
     var container = $id('HomeSubRooms').childNodes[2];
-    removeChildren(container);
+    $empty(container);
     for (var data of rooms) {
       const room = new Room(data);
       API_SetRoomUserStatus($USER.username, room.ID, 'away');

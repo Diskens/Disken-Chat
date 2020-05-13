@@ -41,8 +41,8 @@ class Room {
   }
   hide() {
     var room = $APP.room;
-    removeChildren($id('RoomContainer'));
-    removeChildren($id('RoomMembers'));
+    $empty($id('RoomContainer'));
+    $empty($id('RoomMembers'));
     $id('RoomContainer').hidden = true;
     $id('RoomMembers').hidden = true;
     API_SetRoomUserStatus($USER.username, room.ID, 'away');
