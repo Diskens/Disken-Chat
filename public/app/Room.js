@@ -101,11 +101,9 @@ class Room {
     var files = evt.target.files;
     if (!files.length) return;
     var file = files[0];
-    var reader = new FileReader();
     self.fileReader.readAsDataURL(file);
   }
   onSelectedFileLoaded(data) {
-    data = data.substring('data:image/png;base64,'.length)
     API_SendImage($USER.username, this.ID, data);
   }
   onImageDropped(self, evt) {
@@ -116,7 +114,7 @@ class Room {
     for (var i = 0; i < evt.dataTransfer.items.length; i++) {
       if (evt.dataTransfer.items[i].kind === 'file') {
         var file = evt.dataTransfer.items[i].getAsFile();
-        self.onSelectedFileLoaded(file);
+        self.fileReader.readAsDataURL(file);
       }
     }
   }

@@ -216,7 +216,7 @@ const RoomCreator = {
     var image = $create('img');
     image.classList.add('chatimg');
     image.title = data.username + ', ' + createTimeString(data.timestamp);
-    image.src = 'data:image/png;base64, ' + data.content;
+    image.src = data.header + data.content;
     container.appendChild(image);
 
     if (room.history) { // NOTE
