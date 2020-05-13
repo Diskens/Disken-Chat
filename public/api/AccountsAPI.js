@@ -49,6 +49,7 @@ function On_Connect(data) {
   var text = `v${data.version} ${data.release}`;
   $id('VersionLogin').innerText = text;
   $id('VersionAbout').innerText = text;
+  console.log(`Starting chat app v${data.version} (${data.release})`);
 }
 $SOCKET.on('Connect', On_Connect);
 
