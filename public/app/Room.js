@@ -19,6 +19,11 @@ class Room {
     this.fileReader = new FileReader();
     this.fileReader.onload = ()=>{this.onSelectedFileLoaded(this.fileReader.result)};
   }
+  addUser(data) {
+    this.users.push(data.username);
+    $empty($id('RoomMembers'));
+    RoomCreator.createMemberElements(this, $id('RoomMembers'));
+  }
   showStoredMessages() {
     for (var entry of this.messages) {
       if (entry.entryType == 'M') RoomCreator.createMessage(this, entry);

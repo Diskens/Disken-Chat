@@ -131,6 +131,15 @@ const RoomCreator = {
     resetCode.onclick = $APP.room.resetPasscode;
     options.appendChild(resetCode);
   },
+  addMemberElement: (room, container, data) => {
+    container.hidden = false;
+    var title = $create('h4');
+    title.innerText = 'Room members';
+    container.appendChild(title);
+    for (var user of room.users) {
+      RoomCreator.addMemberElement(room, user, container);
+    }
+  },
   createMemberElements: (room, container) => {
     container.hidden = false;
     var title = $create('h4');

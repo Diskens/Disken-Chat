@@ -26,8 +26,8 @@ $SOCKET.on('JoinRoom', On_JoinRoom);
 
 
 function On_NewRoomMember(data) {
-  var room = $APP.rooms[data.roomID];
-  room.addUser()
+  var room = $APP.rooms[data.room.ID];
+  room.addUser(data);
 }
 $SOCKET.on('NewRoomMember', On_NewRoomMember);
 
