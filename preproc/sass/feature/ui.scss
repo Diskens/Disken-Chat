@@ -1,0 +1,38 @@
+
+input, button {
+  font-size: 1em;
+  outline: none;
+  letter-spacing: .05em;
+  &::-moz-focus-inner { border: 0; }
+}
+
+input { &[type=text], &[type=email], &[type=password] {
+  background-color: inherit;
+  border: 0px;
+  border-bottom: 1px solid $FgInactive;
+  color: $FgText;
+  transition: border .3s;
+  &:hover {
+    border-color: $FgText;
+  }
+  &:focus {
+    border-color: $FgFocus;
+  }
+}}
+
+button {
+  background-color: $BgSecondary;
+  color: $FgInterface;
+  border: 0px;
+  border-bottom: 1px solid $BgSecondary;
+  transition: background .3s;
+  &:hover {
+    background-color: $BgHover;
+  }
+  &:focus {
+    border-color: $FgFocus;
+  }
+  &.active {
+    background-image: linear-gradient(#0000, $BgActive);
+  }
+}

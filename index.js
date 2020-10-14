@@ -1,39 +1,37 @@
-const $PORT = 80;
-const LOG_FN_TEMPLATE = 'logs/serverLogs_$DATE.txt';
+const fs = require('fs');
+require('dotenv/config');
 
-const Log = require('./server/utilities/Logger.js').Logger;
+const mongoose = require('mongoose');
+const Application = require('./server/src/Application');
+const Logger = require('./server/src/Logger');
 
-const {Application} = require('./server/utilities/Application.js');
-const {Meta} = require('./server/utilities/Meta.js');
+mongoose.set('useFindAndModify', false);
 
-const {AccountsApi} = require('./server/AccountsAPI.js');
-const {AccountsData} = require('./server/AccountsData.js');
-const {RoomsApi} = require('./server/RoomsAPI.js');
-const {RoomsData} = require('./server/RoomsData.js');
-const {StatusApi} = require('./server/StatusApi.js');
-const {HistoryData} = require('./server/HistoryData.js');
-
-async function main() {
-  global.$DATA = {};
-  global.$DATA.meta = new Meta('./data/meta.json');
-  global.$DATA.meta.reset();
-  // global.$DATA.meta.createEmpty('alpha', '0.3.0');
-  global.$LOG = new Log(LOG_FN_TEMPLATE, global.$DATA.meta.getTzOffset());
-  global.$APP = new Application($PORT, './public');
-
-  global.$LOG.newSession(global.$DATA.meta);
-
-  $DATA.accounts = new AccountsData();
-  await $DATA.accounts.reset();
-  $DATA.rooms = new RoomsData();
-  await $DATA.rooms.reset();
-  $DATA.history = new HistoryData();
-
-  global.$APP.addAPI('accounts', new AccountsApi());
-  global.$APP.addAPI('rooms', new RoomsApi());
-  global.$APP.addAPI('status', new StatusApi());
-
-  global.$APP.begin();
-}
-
+let main = async () => {
+  // Load config
+  global.config = JSON.parse(fs.readFileSync('config.json'));
+  // Create logger
+  global.log = new Logger(global.config);
+  global.log.newSession();
+  // Connect to the DB and setup schemas
+  mongoose.connect(process.env.DB_URI,
+    { useNewUrlParser: true, useUnifiedTopology: true },
+    () => {global.log.entry('Database', 'Connection successful');});
+  require('./server/Schemas');
+  // Create socket app instance
+  let app = new Application(process.env.PORT, {
+    publicDirectory: process.env.DIR_PUBLIC,
+    faviconDirectory: process.env.DIR_FAVICON
+  });
+  // Define socket callbacks
+  for (let name of ['User']) {
+    global.log.entry('Socket', `Assigning callbacks from "${name}"`);
+    let api = require(`./server/api/${name}`);
+    await api.reset();
+    for (let [key, callback] of Object.entries(api)) {
+      app.on(key, callback);
+  }}
+  // Start socket app
+  app.setupSocket();
+};
 main();

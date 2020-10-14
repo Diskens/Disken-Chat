@@ -1,32 +1,31 @@
-$POPUP_ID = 0;
-$POPUP_COUNT = 0;
+POPUP_ID = 0;
+POPUP_COUNT = 0;
 
-function popup(message) {
-  var id = $POPUP_ID;
-  $POPUP_ID += 1;
+let Popup = {
+  create: (message, duration=3000, parent=undefined) => {
+    let id = POPUP_ID;
+    POPUP_ID += 1;
 
-  var container = document.createElement('div');
-  container.id = `popup_${id}`;
-  container.classList.add('popup');
+    let container = $create('div');
+    container.id = `popup_${id}`;
+    container.classList.add('popup');
 
-  var text = document.createElement('p');
-  text.innerText = message;
-  container.appendChild(text);
+    let text = $create('p');
+    text.innerText = message;
+    container.appendChild(text);
 
-  var close = document.createElement('div');
-  close.classList.add('popupClose');
-  close.innerText = 'X'
-  close.onclick = function() {closePopup(id);};
-  container.appendChild(close);
+    let close = $create('div');
+    close.classList.add('popupClose');
+    close.onclick = () => {Popup.close(id);};
+    container.appendChild(close);
 
-  $id('PopupsContainer').appendChild(container);
-  $POPUP_COUNT += 1;
-  setTimeout(closePopup, 2250, id);
-}
-
-function closePopup(id) {
-  $POPUP_COUNT -= 1;
-  var popup = $id(`popup_${id}`);
-  try { popup.parentNode.removeChild(popup); }
-  catch (err) { return; }
-}
+    if (parent == undefined) parent = $id('PopupBox');
+    parent.appendChild(container);
+    setTimeout(Popup.close, duration, id);
+  },
+  close: (id) => {
+    let popup = $id(`popup_${id}`);
+    try { popup.parentNode.removeChild(popup); }
+    catch (err) { return; }
+  }
+};

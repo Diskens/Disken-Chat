@@ -1,0 +1,40 @@
+@import 'definitions';
+@import "feature/popup";
+@import "feature/ui";
+
+@import "structure";
+
+html, body {
+  margin: 0;
+}
+body {
+  font-family: Lato, sans-serif;
+  color: #CCC;
+  background-color: $BgPrimary;
+  font-size: 1.05em;
+  letter-spacing: .05em;
+}
+
+@include breakpoint(hires portrait) {
+  body {
+    font-size: 2em;
+  }
+}
+
+p {
+  display: inline-block;
+  margin: .75em 0;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-weight: normal;
+}
+h1 {
+  font-size: calc(20px + 2vw);
+}
+
+.clear {
+  clear: both;
+}
+.redText {
+  color: $FgSpecial;
+}
