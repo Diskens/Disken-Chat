@@ -1,5 +1,13 @@
 const mongoose = require('mongoose');
 
+let sanitizeUser = (user) => {
+  user.password = undefined;
+  user.sessionID = undefined;
+  user.__v = undefined;
+  user._id = undefined;
+  return user;
+}
+
 let UserApi = {
   reset: async () => {
     await mongoose.model('Users').updateMany({}, {isOnline:false});
@@ -18,11 +26,6 @@ let UserApi = {
       global.log.entry('Socket', `${user.username} disconnected`);
   },
 
-  GetUsers: async (socket, data) => {
-    let users = await mongoose.model('Users').find();
-    socket.emit('debug', users);
-  },
-
   CredsLogin: async (socket, data) => {
     cookies = false;
     let {username, password, sessionID} = data;
@@ -31,14 +34,14 @@ let UserApi = {
       socket.emit('Login', {cookies, success:false, reason:'User not found'});
       return; }
     if (users[0].password != password) {
-      socket.emit('Login', {cookies, success:false, reason:'Invalid SessionID'});
+      socket.emit('Login', {cookies, success:false, reason:'Incorrect password'});
       return; }
     if (users[0].isOnline) {
       socket.emit('Login', {cookies, success:false, reason:'Already logged in'});
       return; }
     await mongoose.model('Users').findOneAndUpdate({username},
       {isOnline:true, sessionID});
-    socket.emit('Login', {cookies, success:true, user:users[0]});
+    socket.emit('Login', {cookies, success:true, user:sanitizeUser(users[0])});
     global.log.entry('Socket', `${username} logged in`);
   },
 
@@ -57,7 +60,7 @@ let UserApi = {
       return; }
     await mongoose.model('Users').findOneAndUpdate({username},
       {isOnline:true, sessionID:newSession});
-    socket.emit('Login', {cookies, success:true, user:users[0]});
+    socket.emit('Login', {cookies, success:true, user:sanitizeUser(users[0])});
     global.log.entry('Socket', `${username} logged in (cookies)`);
   },
 
@@ -103,6 +106,7 @@ let UserApi = {
       username, email, password, sessionID,
       joined: Date.now() + global.config.tzOffset
     });
+    socket.emit('Signup', {success});
     global.log.entry('Socket', `${username} signed up`);
   },
 };

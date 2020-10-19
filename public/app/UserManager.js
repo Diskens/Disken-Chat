@@ -1,6 +1,6 @@
 
 class UserManager {
-  constructor(socket) {
+  constructor() {
     this.loggedIn = false;
     this.user = {};
     SOCKET.on('Login', (data)=>{this.onLogin(data)});
@@ -10,6 +10,7 @@ class UserManager {
 
   get() {
     if (this.loggedIn) return this.user;
+    else console.log('Not logged in', this);
   }
 
   /* SOCKETIO INTERFACE */
@@ -18,20 +19,18 @@ class UserManager {
     let username = $id('LoginUsername').value;
     let password = $id('LoginPassword').value;
     let sessionID = SOCKET.id;
-    console.log(sessionID);
     SOCKET.emit('CredsLogin', {username, password, sessionID});
   }
   cookieLogin() {
     let username = Cookie.get('Username');
     let sessionID = Cookie.get('SessionID');
     let newSession = SOCKET.id;
-    console.log('Cookie login', sessionID, newSession);
     SOCKET.emit('CookieLogin', {username, sessionID, newSession});
   }
   onLogin(data) {
-    console.log('onLogin', data);
     if (!data.success) {
       if (!data.cookies) Popup.create(`Could not log in (${data.reason})`);
+      swMain.goto('landing');
       return;
     }
     Cookie.set('Username', data.user.username);
@@ -40,13 +39,13 @@ class UserManager {
     swMain.goto('room');
     this.user = data.user;
     this.loggedIn = true;
+    ROOMS.getUserRooms();
   }
 
   logout() {
     if (!this.loggedIn) return;
     let username = this.user.username;
     let sessionID = SOCKET.id;
-    console.log(sessionID);
     SOCKET.emit('Logout', {username, sessionID});
   }
   onLogout(data) {

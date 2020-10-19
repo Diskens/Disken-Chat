@@ -24,7 +24,7 @@ let main = async () => {
     faviconDirectory: process.env.DIR_FAVICON
   });
   // Define socket callbacks
-  for (let name of ['User']) {
+  for (let name of ['User', 'Room']) {
     global.log.entry('Socket', `Assigning callbacks from "${name}"`);
     let api = require(`./server/api/${name}`);
     await api.reset();

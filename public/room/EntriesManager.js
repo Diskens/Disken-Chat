@@ -1,0 +1,6 @@
+
+class EntriesManager {
+  constructor(room) {
+    //
+  }
+}

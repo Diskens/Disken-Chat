@@ -1,0 +1,6 @@
+
+class UploadManager {
+  constructor(room) {
+    //
+  }
+}

@@ -19,6 +19,12 @@ const roomSchema = new Schema({
   owner: {
     type: ObjectId,
     ref: 'Users'
-  }
+  },
+  members: [{
+    type: ObjectId,
+    ref: 'Users'
+  }],
+  makeVisible: Boolean,
+  requirePasscode: Boolean,
 });
-mongoose.model('Room', roomSchema);
+mongoose.model('Rooms', roomSchema);
