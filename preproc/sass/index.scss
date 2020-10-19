@@ -3,34 +3,28 @@
 @import "feature/ui";
 
 @import "structure";
+@import "room";
 
 html, body {
   margin: 0;
 }
 body {
   font-family: Lato, sans-serif;
-  color: #CCC;
+  color: $FgInterface;
   background-color: $BgPrimary;
-  font-size: 1.05em;
   letter-spacing: .05em;
+  font-weight: 300;
+  @include breakpoint(lowres) { font-size: $FsDesktop; }
+  @include breakpoint(hires portrait) { font-size: $FsPortrait; }
+  @include breakpoint(hires landscape) { font-size: $FsLandscape; }
 }
 
-@include breakpoint(hires portrait) {
-  body {
-    font-size: 2em;
-  }
-}
-
-p {
-  display: inline-block;
-  margin: .75em 0;
-}
 h1, h2, h3, h4, h5, h6 {
-  font-weight: normal;
+  font-weight: 300;
 }
-h1 {
-  font-size: calc(20px + 2vw);
-}
+h1 { font-size: 3em; }
+h2 { font-size: 2em; }
+h4 { font-size: 1.3em; }
 
 .clear {
   clear: both;

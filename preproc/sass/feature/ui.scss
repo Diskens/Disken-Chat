@@ -1,15 +1,20 @@
 
 input, button {
-  font-size: 1em;
   outline: none;
   letter-spacing: .05em;
   &::-moz-focus-inner { border: 0; }
 }
 
-input { &[type=text], &[type=email], &[type=password] {
+@include allTextInputs() {
+  font-size: 1rem;
+  @include breakpoint(hires portrait) { font-size: 2rem; }
+  font-weight: 300;
   background-color: inherit;
   border: 0px;
   border-bottom: 1px solid $FgInactive;
+  @-moz-document url-prefix() {
+    border-bottom: 2px solid $FgInactive;
+  }
   color: $FgText;
   transition: border .3s;
   &:hover {
@@ -18,9 +23,12 @@ input { &[type=text], &[type=email], &[type=password] {
   &:focus {
     border-color: $FgFocus;
   }
-}}
+}
 
 button {
+  font-size: 1em;
+  @include breakpoint(hires portrait) { font-size: 1.2em; }
+  font-weight: 300;
   background-color: $BgSecondary;
   color: $FgInterface;
   border: 0px;
@@ -34,5 +42,60 @@ button {
   }
   &.active {
     background-image: linear-gradient(#0000, $BgActive);
+  }
+}
+
+// Custom checkboxes based on
+// https://www.w3schools.com/howto/howto_css_custom_checkbox.asp
+
+/* Hide the browser's default checkbox */
+label {
+  display: block;
+  position: relative;
+  cursor: pointer;
+  color: $FgInterface;
+  opacity: .85;
+  transition: opacity .3s;
+
+  input[type=checkbox] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+  .CustomCheckbox {
+    position: absolute;
+    top: calc(50% - .5em);
+    right: .25em;
+    height: 1em;
+    width: 1.62em;
+    background-color: $BgSecondary;
+    border-bottom: 1px solid $BgSecondary;
+    transition: background .3s;
+    &:after {
+      display: block;
+      content: "";
+      opacity: 0;
+      position: relative;
+      left: 0.685em;
+      width: .25em;
+      height: .7em;
+      border: solid $FgInterface;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+  }
+  &:hover {
+    opacity: 1;
+    input ~ .CustomCheckbox {
+      background-color: $BgHover;
+    }
+  }
+  input:checked ~ .CustomCheckbox:after {
+    opacity: 1;
+  }
+  input:focus ~ .CustomCheckbox {
+    border-bottom: 1px solid $FgFocus;
   }
 }

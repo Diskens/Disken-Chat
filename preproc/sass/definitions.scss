@@ -7,7 +7,7 @@ $bptWide: 1920px * .6;
 // Colors
 $FgText: #FFF;
 $FgInterface: #CCC;
-$FgFocus: #ACE;
+$FgFocus: #74A4D3;
 $FgInactive: #FFF5;
 $FgSpecial: #C58;
 
@@ -16,6 +16,20 @@ $BgPrimary: #231B22;
 $BgSecondary: #23383F;
 $BgHover: #33515B;
 $BgActive: #787878CC;
+
+// Font size
+$FsDesktop: 1.05rem;
+$FsPortrait: 18px;
+$FsLandscape: 1.05rem;
+
+// Text-type inputs
+@mixin allTextInputs() {
+  input {
+    &[type=text], &[type=email], &[type=password] {
+      @content;
+    }
+  }
+}
 
 // Media queries as mixins based on https://stackoverflow.com/a/49421832
 $mediaQueries : (
