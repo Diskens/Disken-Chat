@@ -10,8 +10,8 @@ class RoomsManager {
     // Room specific
     SOCKET.on('GetChatEntries', (data)=>{this.onGetChatEntries(data);});
     SOCKET.on('NewEntry', (data)=>{this.onNewEntry(data);});
-    SOCKET.on('MarkMemberStatus', (data)=>{this.onMarkMemberStatus(data);});
     SOCKET.on('GetRoomUsernames', (data)=>{this.onGetRoomUsernames(data);});
+    SOCKET.on('NewMember', (data)=>{this.onNewMember(data);})
   }
   gotoRoom(id) {
     this.current = id;
@@ -65,7 +65,7 @@ class RoomsManager {
       Popup.create(`Could not load usernames dictionary (${data.reason})`);
       return;
     }
-    this.rooms[data.roomID].setUsernames(data.usernames);
+    this.rooms[data.roomID].members.setUsernames(data.usernames);
   }
 
   createRoom() {
@@ -136,18 +136,7 @@ class RoomsManager {
     this.rooms[data.roomID].entries.append(data.entry);
   }
 
-  markMemberStatus(roomID, status) {
-    SOCKET.emit('MarkMemberStatus', {
-      userID: USER.get().ID,
-      sessionID: SOCKET.id,
-      roomID, status
-    });
-  }
-  onMarkMemberStatus(data) {
-    if (!data.success) {
-      Popup.create(`Could not update member status (${data.reason})`);
-      return;
-    }
-    this.rooms[data.roomID].members.markStatus(data.userID, data.status);
+  onNewMember(data) {
+    this.rooms[data.roomID].members.addMember(data.userID, data.username);
   }
 }

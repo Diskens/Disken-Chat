@@ -10,18 +10,11 @@ class Room {
     };
     this.ID = data.ID;
     this.name = data.name;
-    this.usernames = {};
     this.entries = new EntriesManager(this);
     this.uploader = new UploadManager(this);
     this.members = new MembersManager(this);
     this.members.addMembers(data.members);
     this.dom = new RoomDomManager(this);
-  }
-  setUsernames(usernames) {
-    this.usernames = usernames;
-  }
-  getUsername(userID) {
-    return this.usernames[userID];
   }
   initialize() {
     this.manager.getChatEntries(this.ID);
@@ -31,12 +24,10 @@ class Room {
     if (!this.initialized) this.initialize();
     this.active = true;
     this.dom.show();
-    this.manager.markMemberStatus(this.ID, 'active');
   }
   hide() {
     this.active = false;
     this.dom.hide();
-    this.manager.markMemberStatus(this.ID, 'inactive');
   }
 
   sendTextEntry() {

@@ -1,14 +1,24 @@
 
 class MembersManager {
   constructor(room) {
+    this.room = room;
     this.members = {};
   }
-  addMembers(members) {
-    for (let member of members) {
-      this.members[member.userID] = member;
-    }
+
+  addMember(userID, username) {
+    console.log(`${this.room.name}: Adding member ${username}`);
+    if (username == undefined) username = userID;
+    this.members[userID] = {userID, username};
   }
-  markStatus(userID, status) {
-    console.log('Status of', this.members[userID], 'changed to', status)
+  addMembers(members) {
+    for (let member of members) this.addMember(member);
+  }
+
+  setUsernames(usernames) {
+    for (let [userID, username] of Object.entries(usernames))
+      this.members[userID].username = username;
+  }
+  getUsername(userID) {
+    return this.members[userID].username;
   }
 }

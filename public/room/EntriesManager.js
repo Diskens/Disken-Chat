@@ -5,10 +5,9 @@ class EntriesManager {
     this.clusters = [];
   }
   getUsername(userID) {
-    return this.room.getUsername(userID);
+    return this.room.members.getUsername(userID);
   }
   prependMany(entries) {
-    console.log(entries.map((e)=>{return `${this.room.getUsername(e.userID)}: ${e.content}`;}));
     entries = entries.reverse();
     for (let entry of entries) this.prepend(entry);
   }

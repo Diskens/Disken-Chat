@@ -21,14 +21,6 @@ let getRandomPasscode = () => {
 let RoomApi = {
   reset: async () => {},
 
-  // disconnecting: async (socket) => {
-  //   let rooms = await mongoose.model('Rooms').find({members:user._id});
-  //   for (let room of rooms) {
-  //     socket.to(room._id).emit('MarkMemberStatus',
-  //       {userID:data.userID, status:'offline'});
-  //   }
-  // },
-
   GetUserRooms: async (socket, data) => {
     let {auth, reason, user} = await authenticate(data);
     if (!auth) {
@@ -103,10 +95,13 @@ let RoomApi = {
       socket.emit('JoinRoom', {success:false, reason:validation.reason});
       return;
     }
+    let roomID = rooms[0]._id;
     await mongoose.model('Rooms').findOneAndUpdate({name},
       {$push: {members: userID}});
     socket.emit('JoinRoom', {success:true, name});
     global.log.entry('Socket', `${user.username} joined room ${name}`);
+    global.app.io.sockets.in(roomID).emit('NewMember',
+      {roomID, userID, username:user.username});
   },
 
   GetChatEntries: async (socket, data) => {
@@ -146,26 +141,7 @@ let RoomApi = {
     };
     await mongoose.model('Rooms').findOneAndUpdate({_id:roomID},
       {$push: {entries: entry}});
-    console.log('Entry', entry.content);
     global.app.io.sockets.in(roomID).emit('NewEntry', {roomID, entry});
-  },
-
-  MarkMemberStatus: async (socket, data) => {
-    let {auth, reason, user} = await authenticate(data);
-    if (!auth) {
-      socket.emit('NewEntry', {success:false, reason});
-      return;
-    }
-    let {roomID, userID} = data;
-    let rooms = await mongoose.model('Rooms').find({_id:roomID});
-    let validation = Validator.roomExists({rooms});
-    if (!validation.success) {
-      socket.emit('MarkMemberStatus', {success:false, reason:validation.reason});
-      return;
-    }
-    for (let room of rooms) {
-      socket.to(roomID).emit('MarkMemberStatus', {userID, status:'offline'});
-    }
   },
 
   Reaction: async (socket, data) => {
