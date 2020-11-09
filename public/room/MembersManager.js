@@ -6,7 +6,6 @@ class MembersManager {
   }
 
   addMember(userID, username) {
-    console.log(`${this.room.name}: Adding member ${username}`);
     if (username == undefined) username = userID;
     this.members[userID] = {userID, username};
   }
