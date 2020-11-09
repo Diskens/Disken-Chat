@@ -13,6 +13,7 @@ body {
   color: $FgInterface;
   letter-spacing: .05em;
   font-weight: 300;
+  background-color: $BgPrimary;
   @include breakpoint(lowres) { font-size: $FsDesktop; }
   @include breakpoint(hires portrait) { font-size: $FsPortrait; }
   @include breakpoint(hires landscape) { font-size: $FsLandscape; }
