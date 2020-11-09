@@ -58,6 +58,7 @@ class UserManager {
     this.loggedIn = false;
     swMain.goto('landing');
     Popup.create(`Logged out`);
+    ROOMS.purge();
   }
 
   signup() {

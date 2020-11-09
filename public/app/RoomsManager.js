@@ -22,6 +22,12 @@ class RoomsManager {
     this.rooms[this.current].hide();
     swRoom.goto('list');
   }
+  purge() {
+    swRoom.goto('list');
+    for (let room of Object.values(this.rooms)) room.dom.purge();
+    this.rooms = {};
+    this.current = '';
+  }
 
   /* MANAGEMENT SOCKETIO INTERFACE */
 

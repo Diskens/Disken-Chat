@@ -14,6 +14,13 @@ class RoomDomManager {
     this.detailsRoot.hidden = true;
     this.roomName.hidden = true;
   }
+
+  purge() {
+    $remove(this.roomName);
+    $remove(this.chatRoot);
+    $remove(this.detailsRoot);
+  }
+
   prependCluster(cluster) {
     this.entries.prepend(cluster.dom.container);
   }
