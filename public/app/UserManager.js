@@ -20,6 +20,7 @@ class UserManager {
     let password = $id('LoginPassword').value;
     let sessionID = SOCKET.id;
     SOCKET.emit('CredsLogin', {username, password, sessionID});
+    $id('LoginPassword').value = '';
   }
   cookieLogin() {
     let username = Cookie.get('Username');
@@ -65,12 +66,16 @@ class UserManager {
     let password = $id('SignupPassword').value;
     let sessionID = SOCKET.id;
     SOCKET.emit('Signup', {username, email, password, sessionID});
+    $id('SignupPassword').value = '';
   }
   onSignup(data) {
     if (!data.success) {
       Popup.create(`Could not sign up (${data.reason})`);
       return;
     }
+    Popup.create(`Signed up. Please log in to continue.`);
+    $id('SignupUsername').value = '';
+    $id('SignupEmail').value = '';
   }
 
 }
