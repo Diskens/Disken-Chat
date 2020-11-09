@@ -33,7 +33,7 @@ $html {
       $button[#BtnHome onclick 'swMain.goto("landing")'] {Home}
       $button[#BtnAbout onclick 'swMain.goto("about")'] {About}
       $span[.Version]
-      $div[.clear]
+      $div[.Clear]
     }
     $header[#UserHeader] {
       $button[#BtnRoom onclick 'swMain.goto("room")'] {Rooms}
@@ -41,7 +41,7 @@ $html {
       $button[#BtnCreate onclick 'swMain.goto("create")'] {Create}
       $button[#BtnAccount onclick 'swMain.goto("account")'] {Account}
       $button[#BtnLogOut .redText onclick 'USER.logout()'] {Log out}
-      $div[.clear]
+      $div[.Clear]
     }
 
     $section[#Banner] {
@@ -62,7 +62,7 @@ $html {
         %input[#SignupPassword type password placeholder Password]
         $button[onclick 'USER.signup()'] {Sign up}
       }
-      $div[.clear]
+      $div[.Clear]
     }
 
     $section[#SectionAbout .TextContent .SlideIn] {
@@ -96,13 +96,13 @@ $html {
         $button[#BtnChat onclick 'swRoom.goto("chat")'] {Chat}
         $button[#BtnDetails onclick 'swRoom.goto("details")'] {Details}
         $button[#BtnList .redText onclick 'ROOMS.leaveRoom()'] {Back}
-        $div[.clear]
+        $div[.Clear]
       }
       $div[#RoomList .TextContent .SlideIn] {
         $div[#RoomListHeader] {
           $div[.text] {List of your rooms}
           $button[onclick 'ROOMS.getUserRooms(true)'] {Refresh}
-          $div[.clear]
+          $div[.Clear]
         }
         $div[#RoomListContainer]
       }
@@ -114,7 +114,7 @@ $html {
       $header {
         $button[#BtnPublic onclick 'swBrowse.goto("browse")'] {Browse}
         $button[#BtnJoin onclick 'swBrowse.goto("join")'] {Join}
-        $div[.clear]
+        $div[.Clear]
       }
       $div[#BrowsePublic .TextContent .SlideIn] {
         $div {Browse public rooms}
