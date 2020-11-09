@@ -14,6 +14,7 @@ $html {
     $script[src 'utilities/Cookie.js']
 
     $script[src 'room/Room.js']
+    $script[src 'room/EntryTypes.js']
     $script[src 'room/EntriesManager.js']
     $script[src 'room/UploadManager.js']
     $script[src 'room/MembersManager.js']
@@ -25,6 +26,7 @@ $html {
     $script[src 'Main.js']
   }
   $body[onload 'onDomLoaded()'] {
+    $div[.Background]
     $div[#PopupBox]
 
     $header[#AnonHeader] {
@@ -97,8 +99,12 @@ $html {
         $div[.clear]
       }
       $div[#RoomList .TextContent .SlideIn] {
-        List of your rooms
-        $div[.list]
+        $div[#RoomListHeader] {
+          $div[.text] {List of your rooms}
+          $button[onclick 'ROOMS.getUserRooms(true)'] {Refresh}
+          $div[.clear]
+        }
+        $div[#RoomListContainer]
       }
       $div[#RoomChat]
       $div[#RoomDetails .TextContent .SlideIn]
@@ -111,10 +117,15 @@ $html {
         $div[.clear]
       }
       $div[#BrowsePublic .TextContent .SlideIn] {
-        Browse public rooms
+        $div {Browse public rooms}
       }
       $div[#BrowseJoin .TextContent .SlideIn] {
-        Join a room with a passcode
+        $div {Join a room}
+        $form[#JoinForm action 'javascript:void(0);'] {
+          %input[#JoinName type text placeholder 'Room name']
+          %input[#JoinPasscode type text placeholder 'Room passcode']
+          $button[onclick 'ROOMS.joinRoom();'] {Confirm}
+        }
       }
     }
 
