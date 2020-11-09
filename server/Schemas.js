@@ -11,8 +11,9 @@ const usersSchema = new Schema({
   joined: Date
 });
 mongoose.model('Users', usersSchema);
+exports.usersSchema = usersSchema;
 
-const roomSchema = new Schema({
+const roomsSchema = new Schema({
   name: String,
   passcode: String,
   created: Date,
@@ -24,7 +25,21 @@ const roomSchema = new Schema({
     type: ObjectId,
     ref: 'Users'
   }],
+  entries: [{
+    etype: String,
+    content: String,
+    timestamp: Date,
+    userID: {
+      type: ObjectId,
+      ref: 'Users'
+    },
+    reactions: [{
+      type: ObjectId,
+      ref: 'Users'
+    }]
+  }],
   makeVisible: Boolean,
   requirePasscode: Boolean,
 });
-mongoose.model('Rooms', roomSchema);
+mongoose.model('Rooms', roomsSchema);
+exports.roomsSchema = roomsSchema;

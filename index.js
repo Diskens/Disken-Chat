@@ -19,7 +19,7 @@ let main = async () => {
     () => {global.log.entry('Database', 'Connection successful');});
   require('./server/Schemas');
   // Create socket app instance
-  let app = new Application(process.env.PORT, {
+  global.app = new Application(process.env.PORT, {
     publicDirectory: process.env.DIR_PUBLIC,
     faviconDirectory: process.env.DIR_FAVICON
   });
@@ -29,9 +29,9 @@ let main = async () => {
     let api = require(`./server/api/${name}`);
     await api.reset();
     for (let [key, callback] of Object.entries(api)) {
-      app.on(key, callback);
+      global.app.on(key, callback);
   }}
   // Start socket app
-  app.setupSocket();
+  global.app.setupSocket();
 };
 main();
