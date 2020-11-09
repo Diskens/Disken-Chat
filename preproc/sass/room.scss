@@ -1,3 +1,4 @@
+
 header div.ChatName {
   float: right;
   padding: .2em 1em;
@@ -8,28 +9,61 @@ header div.ChatName {
 .ChatRoot {
   overflow: hidden;
   div.EntriesContainer {
+    scroll-behavior: smooth;
+    overflow-y: scroll;
     width: 100%;
     height: calc(100vh - 5.8em - .2em);
-  }
-  input.ChatInput {
-    box-sizing: border-box;
-    width: calc(100% - 2px - 5.6em);
-    padding: .2em .5em;
-    margin-left: .3em;
-    border: 1px solid $FgInterface;
-    border-radius: .7em;
-    &:focus {
-      border-color: $FgFocus;
+    div.Cluster {
+      span.Username {
+        color: $FgInterface;
+        font-size: .8rem;
+        margin-left: $EntryMarginX;
+      }
+      div.Entry {
+        margin: $EntryMarginY $EntryMarginX;
+        margin-right: calc(#{$ClusterMarginX} - #{$EntryPaddingX} - #{$EntryPaddingX});
+        text-align: left;
+        span.Inner {
+          display: inline-block;
+          background-color: $BgEntry;
+          border-radius: .4em;
+          padding: $EntryPaddingY $EntryPaddingX;
+          white-space: pre-wrap;
+        }
+      }
+    }
+    div.Cluster.Own {
+      div.Entry {
+        margin-left: calc(#{$ClusterMarginX} - #{$EntryPaddingX});
+        margin-right: $EntryMarginX;
+        text-align: right;
+        span.Inner {
+          background-color: $BgEntryOwn;
+        }
+      }
     }
   }
-  button.ChatSend {
-    box-sizing: border-box;
-    width: 5em;
-    height: 1.4em;
-    background: none;
-    border: none;
-    &:focus {
-      color: $FgFocus;
+  div.BottomBar {
+    input.ChatInput {
+      box-sizing: border-box;
+      width: calc(100% - 2px - 5.6em);
+      padding: .2em .5em;
+      margin-left: .3em;
+      border: 1px solid $FgInterface;
+      border-radius: .7em;
+      &:focus {
+        border-color: $FgFocus;
+      }
+    }
+    button.ChatSend {
+      box-sizing: border-box;
+      width: 5em;
+      height: 1.4em;
+      background: none;
+      border: none;
+      &:focus {
+        color: $FgFocus;
+      }
     }
   }
 }
