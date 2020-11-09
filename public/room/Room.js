@@ -8,13 +8,20 @@ class Room {
       makeVisible: data.makeVisible,
       requirePasscode: data.requirePasscode
     };
-    this.ID = data._id;
+    this.ID = data.ID;
     this.name = data.name;
+    this.usernames = {};
     this.entries = new EntriesManager(this);
     this.uploader = new UploadManager(this);
     this.members = new MembersManager(this);
     this.members.addMembers(data.members);
     this.dom = new RoomDomManager(this);
+  }
+  setUsernames(usernames) {
+    this.usernames = usernames;
+  }
+  getUsername(userID) {
+    return this.usernames[userID];
   }
   initialize() {
     this.manager.getChatEntries(this.ID);
@@ -32,8 +39,8 @@ class Room {
     this.manager.markMemberStatus(this.ID, 'inactive');
   }
 
-  sendMessage() {
-    let message = this.dom.input.value;
-    console.log('Message =', message);
+  sendTextEntry() {
+    let content = this.dom.input.value;
+    this.manager.newEntry(this.ID, 'text', content);
   }
 }

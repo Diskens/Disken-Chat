@@ -21,6 +21,10 @@ class RoomDomManager {
     this.entries.appendChild(cluster.dom.container);
   }
 
+  scrollDown() {
+    this.entries.scrollTop = this.entries.scrollHeight;
+  }
+
   createDom() {
     this.createRoomChat($id('RoomChat'));
     this.createRoomDetails($id('RoomDetails'));
@@ -41,18 +45,29 @@ class RoomDomManager {
     this.entries.classList.add('EntriesContainer');
     this.chatRoot.appendChild(this.entries);
 
+    this.bottomBar = $create('div');
+    this.bottomBar.classList.add('BottomBar');
+    this.chatRoot.appendChild(this.bottomBar);
+
     this.input = $create('input');
+    $on(this.chatRoot, 'focus', ()=>{this.input.focus();});
     this.input.classList.add('ChatInput');
     this.input.type = 'text';
-    this.chatRoot.appendChild(this.input);
+    this.bottomBar.appendChild(this.input);
     let keyboard = new Keyboard(this.input);
-    keyboard.bind('Enter', ()=>{this.room.sendMessage();});
+    keyboard.bind('Enter', () => {
+      this.room.sendTextEntry();
+      this.input.value = '';
+    });
 
     this.send = $create('button');
     this.send.classList.add('ChatSend');
     this.send.innerText = 'Send';
-    this.send.onclick = ()=>{this.room.sendMessage();}
-    this.chatRoot.appendChild(this.send);
+    this.bottomBar.appendChild(this.send);
+    this.send.onclick = () => {
+      this.room.sendTextEntry();
+      this.input.value = '';
+    }
   }
   createRoomDetails(parent) {
     this.detailsRoot = $create('div');
