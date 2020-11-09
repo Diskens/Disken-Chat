@@ -11,12 +11,25 @@ html, body {
 body {
   font-family: Lato, sans-serif;
   color: $FgInterface;
-  background-color: $BgPrimary;
   letter-spacing: .05em;
   font-weight: 300;
   @include breakpoint(lowres) { font-size: $FsDesktop; }
   @include breakpoint(hires portrait) { font-size: $FsPortrait; }
   @include breakpoint(hires landscape) { font-size: $FsLandscape; }
+}
+
+.Background {
+  position: fixed;
+  top: -50%; height: 200%; // -sin(deg), 1+2sin(deg)
+  left: -90%; width: 280%; // -cos(deg), 1+2cos(deg)
+  transform: rotate(30deg);
+  background-color: $BgPrimary;
+  background-image: url('img/grid_cell.png');
+  background-repeat: repeat;
+  background-position: center;
+  background-size: 2.25em;
+  z-index: -5;
+  filter: blur(.1em);
 }
 
 h1, h2, h3, h4, h5, h6 {
