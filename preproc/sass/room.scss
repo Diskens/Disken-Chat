@@ -14,10 +14,13 @@ header div.ChatName {
     width: 100%;
     height: calc(100vh - 5.8em - .2em);
     div.Cluster {
+      margin-top: .75em;
       span.Username {
         color: $FgInterface;
         font-size: .8rem;
         margin-left: $EntryMarginX;
+        position: relative;
+        top: -.5em;
       }
       div.Entry {
         margin: $EntryMarginY $EntryMarginX;
@@ -31,14 +34,14 @@ header div.ChatName {
           white-space: pre-wrap;
         }
       }
-    }
-    div.Cluster.Own {
-      div.Entry {
-        margin-left: calc(#{$ClusterMarginX} - #{$EntryPaddingX});
-        margin-right: $EntryMarginX;
-        text-align: right;
-        span.Inner {
-          background-color: $BgEntryOwn;
+      &.Cluster.Own {
+        div.Entry {
+          margin-left: calc(#{$ClusterMarginX} - #{$EntryPaddingX});
+          margin-right: $EntryMarginX;
+          text-align: right;
+          span.Inner {
+            background-color: $BgEntryOwn;
+          }
         }
       }
     }
