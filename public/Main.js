@@ -1,6 +1,6 @@
 let SOCKET, USER, ROOMS;
 let userMenu, anonMenu; // Domi.js toggles
-let swMain, swRoomsMng, swRoom, swBrowse; // Domi.js switches
+let swMain, swRoom, swBrowse; // Domi.js switches
 
 let onDomLoaded = () => {
   SOCKET = io.connect(window.location.href);
