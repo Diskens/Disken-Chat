@@ -1,4 +1,4 @@
-// Domi.js v0.2
+// Domi.js v0.2.1
 // Github https://github.com/Jakub21/Domi.js
 // MIT License
 
@@ -6,6 +6,7 @@ let $id = (id) => { return document.getElementById(id); }
 let $cn = (cn) => { return document.getElementsByClassName(cn); }
 let $tag = (tag) => { return document.getElementsByTagName(tag); }
 let $qr = (query) => { return document.querySelector(query); }
+let $remove = (elm) => { elm.parentNode.removeChild(elm); };
 let $create = (tag, id=undefined) => { let elm = document.createElement(tag); if (id != undefined) elm.id = id; return elm;}
 let $text = (text, id=undefined) => { let elm = document.createTextNode(text); if (id != undefined) elm.id = id; return elm;}
 let $on = (elm, key, cb) => { elm.addEventListener(key, cb); }
