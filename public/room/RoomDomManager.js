@@ -33,55 +33,49 @@ class RoomDomManager {
   }
 
   createDom() {
-    this.createRoomChat($id('RoomChat'));
-    this.createRoomDetails($id('RoomDetails'));
-    this.roomName = $create('div');
-    this.roomName.classList.add('ChatName');
-    this.roomName.innerText = this.room.name;
-    this.roomName.hidden = true;
+    let compiler = new ShpCompiler();
+    this.createRoomChat(compiler, $id('RoomChat'));
+    this.createRoomDetails(compiler, $id('RoomDetails'));
+    this.roomName = compiler.compile(`$div[.ChatName !hidden] {
+      ${this.room.name}}`)[0];
     $id('RoomHeader').prepend(this.roomName);
-    // prepend to make sure it's before the div.clear
   }
-  createRoomChat(parent) {
-    this.chatRoot = $create('div');
-    this.chatRoot.classList.add('ChatRoot');
-    this.chatRoot.hidden = true;
-    parent.appendChild(this.chatRoot);
 
-    this.entries = $create('div');
-    this.entries.classList.add('EntriesContainer');
-    this.chatRoot.appendChild(this.entries);
 
-    this.bottomBar = $create('div');
-    this.bottomBar.classList.add('BottomBar');
-    this.chatRoot.appendChild(this.bottomBar);
-
-    this.input = $create('input');
-    $on(this.chatRoot, 'focus', ()=>{this.input.focus();});
-    this.input.classList.add('ChatInput');
-    this.input.type = 'text';
-    this.bottomBar.appendChild(this.input);
-    let keyboard = new Keyboard(this.input);
-    keyboard.bind('Enter', () => {
-      this.room.sendTextEntry();
-      this.input.value = '';
-    });
-
-    this.send = $create('button');
-    this.send.classList.add('ChatSend');
-    this.send.innerText = 'Send';
-    this.bottomBar.appendChild(this.send);
-    this.send.onclick = () => {
+  createRoomChat(compiler, parent) {
+    let sendTextEntry = () => {
       this.room.sendTextEntry();
       this.input.value = '';
     }
+    this.chatRoot = compiler.compile(`
+      $div[.ChatRoot !hidden] {
+        $div[.EntriesContainer]
+        $div[.BottomBar] {
+          $input[.ChatInput type text]
+          $button[.ChatSend] {Send}
+        }
+      }
+    `)[0];
+    parent.appendChild(this.chatRoot);
+    this.entries = this.chatRoot.querySelector('.EntriesContainer');
+    this.input = this.chatRoot.querySelector('.ChatInput');
+    $on(this.chatRoot, 'click', () => {
+      if (!window.getSelection().toString()) this.input.focus();
+    });
+    let keyboard = new Keyboard(this.input);
+    keyboard.bind('Enter', sendTextEntry);
+    let sendText = this.chatRoot.querySelector('.ChatSend');
+    $on(sendText, 'click', sendTextEntry);
   }
-  createRoomDetails(parent) {
-    this.detailsRoot = $create('div');
-    this.detailsRoot.classList.add('DetailsRoot');
-    this.detailsRoot.hidden = true;
+  createRoomDetails(compiler, parent) {
+    this.detailsRoot = compiler.compile(`
+      $div[.DetailsRoot !hidden] {
+        $div[.Pair] { $div[.Key] {Name}
+          $div[.Value] {${this.room.name}}
+          $div[.Clear]
+        }
+      }
+    `)[0];
     parent.appendChild(this.detailsRoot);
-
-    this.detailsRoot.innerText = `Details of room ${this.room.name}`;
   }
 }
