@@ -1,6 +1,9 @@
 @import 'definitions';
 @import "feature/popup";
 @import "feature/ui";
+@import "feature/options";
+@import "feature/textContent";
+@import "feature/header";
 
 @import "structure";
 @import "room";
@@ -17,6 +20,9 @@ body {
   @include breakpoint(lowres) { font-size: $FsDesktop; }
   @include breakpoint(hires portrait) { font-size: $FsPortrait; }
   @include breakpoint(hires landscape) { font-size: $FsLandscape; }
+}
+section {
+  overflow: visible;
 }
 
 .Background {

@@ -1,11 +1,4 @@
 
-header div.ChatName {
-  float: right;
-  padding: .2em 1em;
-  font-style: italic;
-  color: $FgText;
-}
-
 .ChatRoot {
   overflow: hidden;
   div.EntriesContainer {
@@ -72,36 +65,9 @@ header div.ChatName {
 }
 
 .DetailsRoot {
-  .Pair {
-    margin: auto;
-    width: 50%;
-    min-width: 25em;
-    padding: .5em;
-    .Key {
-      float: left;
-      padding: 0 .5em;
-    }
-    .Value {
-      float: right;
-      padding: 0 .5em;
-    }
-  }
-  .Right {
-    margin: auto;
-    width: 50%;
-    min-width: 350px;
-    &>* {
-      float: right;
-      margin-left: .25em;
-    }
-    &::after {
-      content: '';
-      display: block;
-      clear: both;
-    }
-  }
   .Passcode {
     filter: blur(.25em);
+    transition: filter .15s ease;
     &:hover {
       filter: none;
     }
