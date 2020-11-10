@@ -10,6 +10,7 @@ class Room {
     };
     this.ID = data.ID;
     this.name = data.name;
+    this.passcode = data.passcode;
     this.entries = new EntriesManager(this);
     this.uploader = new UploadManager(this);
     this.members = new MembersManager(this);
@@ -28,6 +29,11 @@ class Room {
   hide() {
     this.active = false;
     this.dom.hide();
+  }
+  updatePasscode(passcode) {
+    this.passcode = passcode;
+    this.dom.updatePasscode(passcode);
+    Popup.create('Updated the passcode');
   }
 
   sendTextEntry() {

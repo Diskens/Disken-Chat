@@ -31,6 +31,9 @@ class RoomDomManager {
   scrollDown() {
     this.entries.scrollTop = this.entries.scrollHeight;
   }
+  updatePasscode(passcode) {
+    this.passcode.innerText = passcode;
+  }
 
   createDom() {
     let compiler = new ShpCompiler();
@@ -68,14 +71,43 @@ class RoomDomManager {
     $on(sendText, 'click', sendTextEntry);
   }
   createRoomDetails(compiler, parent) {
+    let passcodeShp = (this.room.passcode == undefined) ? `
+    $div[.Pair] {
+      $div[.Key] {Passcode}
+      $div[.Value] {You can not view the passcode}
+      $div[.Clear]
+    }
+    ` : `
+      $div[.Pair] {
+        $div[.Key] {Passcode}
+        $div[.Value .Passcode] {${this.room.passcode}}
+        $div[.Clear]
+      }
+      $div[.Right] {
+        $button[.CopyPasscode] {Copy}
+        $button[.ResetPasscode] {Reset}
+      }
+      $div[.Clear]
+      `;
     this.detailsRoot = compiler.compile(`
       $div[.DetailsRoot !hidden] {
         $div[.Pair] { $div[.Key] {Name}
           $div[.Value] {${this.room.name}}
           $div[.Clear]
         }
+        ${passcodeShp}
       }
     `)[0];
     parent.appendChild(this.detailsRoot);
+    this.passcode = this.detailsRoot.querySelector('.Passcode');
+    if (this.room.passcode != undefined) {
+      let copy = this.detailsRoot.querySelector('.CopyPasscode');
+      $on(copy, 'click', () => {
+        Clipboard.copy(this.room.passcode);
+        Popup.create('Copied passcode to the clipboard');
+      });
+      let reset = this.detailsRoot.querySelector('.ResetPasscode');
+      $on(reset, 'click', ()=>{this.room.manager.resetPasscode(this.room.ID);});
+    }
   }
 }

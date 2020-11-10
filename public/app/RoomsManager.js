@@ -11,6 +11,7 @@ class RoomsManager {
     SOCKET.on('GetChatEntries', (data)=>{this.onGetChatEntries(data);});
     SOCKET.on('NewEntry', (data)=>{this.onNewEntry(data);});
     SOCKET.on('GetRoomUsernames', (data)=>{this.onGetRoomUsernames(data);});
+    SOCKET.on('ResetPasscode', (data)=>{this.onResetPasscode(data);});
     SOCKET.on('NewMember', (data)=>{this.onNewMember(data);})
   }
   gotoRoom(id) {
@@ -140,6 +141,21 @@ class RoomsManager {
       return;
     }
     this.rooms[data.roomID].entries.append(data.entry);
+  }
+
+  resetPasscode(roomID) {
+    SOCKET.emit('ResetPasscode', {
+      userID: USER.get().ID,
+      sessionID: SOCKET.id,
+      roomID
+    });
+  }
+  onResetPasscode(data) {
+    if (data.error) {
+      Popup.create(`Could not reset passcode (${data.reason})`);
+      return;
+    }
+    this.rooms[data.roomID].updatePasscode(data.passcode);
   }
 
   onNewMember(data) {

@@ -17,9 +17,9 @@ class Sanitizer {
     return this._sanitize(user, schema, ['password', 'sessionID']);
   }
 
-  sanitizeRoom(room) {
+  sanitizeRoom(room, includePasscode) {
     let schema = require('../Schemas').roomsSchema.obj;
-    return this._sanitize(room, schema, ['passcode']);
+    return this._sanitize(room, schema, includePasscode?[]:['passcode']);
   }
 }
 module.exports = new Sanitizer();

@@ -29,7 +29,9 @@ let RoomApi = {
     }
     let {userTriggered} = data;
     let rooms = await mongoose.model('Rooms').find({members:user._id});
-    rooms = rooms.map((room)=>{return Sanitizer.sanitizeRoom(room)});
+    rooms = rooms.map((room) => {
+      return Sanitizer.sanitizeRoom(room, room.owner.toString() == user._id.toString());
+    });
     for (let room of rooms) {
       socket.join(room.ID);
     }
@@ -149,6 +151,24 @@ let RoomApi = {
     //   'items.$.name': 'updated item2',
     //   'items.$.value': 'two updated'
     // }}
-  }
+  },
+
+  ResetPasscode: async (socket, data) => {
+    let {auth, reason, user} = await authenticate(data);
+    if (!auth) {
+      socket.emit('ResetPasscode', {error:true, reason});
+      return;
+    }
+    let {roomID, userID, etype, content} = data;
+    let rooms = await mongoose.model('Rooms').find({_id:roomID});
+    let validation = Validator.roomExists({rooms});
+    if (!validation.success) {
+      socket.emit('ResetPasscode', {error:true, reason:validation.reason});
+      return;
+    }
+    let passcode = getRandomPasscode();
+    await mongoose.model('Rooms').findOneAndUpdate({_id:roomID}, {passcode});
+    socket.emit('ResetPasscode', {roomID, passcode});
+  },
 };
 module.exports = RoomApi;

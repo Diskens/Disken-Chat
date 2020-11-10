@@ -12,6 +12,7 @@ $html {
     $script[src 'utilities/Domi.js']
     $script[src 'utilities/Popup.js']
     $script[src 'utilities/Cookie.js']
+    $script[src 'utilities/Clipboard.js']
     $script[src 'utilities/shp.js']
 
     $script[src 'room/Room.js']
