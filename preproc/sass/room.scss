@@ -49,7 +49,7 @@ header div.ChatName {
   div.BottomBar {
     input.ChatInput {
       box-sizing: border-box;
-      width: calc(100% - 2px - 5.6em);
+      width: calc(100% - 2px - 7em);
       padding: .2em .5em;
       margin-left: .3em;
       border: 1px solid $FgInterface;
@@ -72,5 +72,38 @@ header div.ChatName {
 }
 
 .DetailsRoot {
-  //
+  .Pair {
+    margin: auto;
+    width: 50%;
+    min-width: 25em;
+    padding: .5em;
+    .Key {
+      float: left;
+      padding: 0 .5em;
+    }
+    .Value {
+      float: right;
+      padding: 0 .5em;
+    }
+  }
+  .Right {
+    margin: auto;
+    width: 50%;
+    min-width: 350px;
+    &>* {
+      float: right;
+      margin-left: .25em;
+    }
+    &::after {
+      content: '';
+      display: block;
+      clear: both;
+    }
+  }
+  .Passcode {
+    filter: blur(.25em);
+    &:hover {
+      filter: none;
+    }
+  }
 }
