@@ -89,9 +89,7 @@ $html {
       }
     }
 
-    $section[#SectionAccount .TextContent .SlideIn] {
-      Your account details
-    }
+    $section[#SectionAccount .TextContent .SlideIn]
 
     $section[#SectionRoom] {
       $header[#RoomHeader] {

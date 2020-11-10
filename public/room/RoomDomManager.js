@@ -83,14 +83,14 @@ class RoomDomManager {
         $div[.Value .Passcode] {${this.room.passcode}}
         $div[.Clear]
       }
-      $div[.Right] {
+      $div[.AlignRight] {
         $button[.CopyPasscode] {Copy}
         $button[.ResetPasscode] {Reset}
       }
       $div[.Clear]
       `;
     this.detailsRoot = compiler.compile(`
-      $div[.DetailsRoot !hidden] {
+      $div[.DetailsRoot .TextContent !hidden] {
         $div[.Pair] { $div[.Key] {Name}
           $div[.Value] {${this.room.name}}
           $div[.Clear]

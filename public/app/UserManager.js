@@ -40,6 +40,7 @@ class UserManager {
     swMain.goto('room');
     this.user = data.user;
     this.loggedIn = true;
+    this.createAccountSection();
     ROOMS.getUserRooms();
   }
 
@@ -58,6 +59,7 @@ class UserManager {
     this.loggedIn = false;
     swMain.goto('landing');
     Popup.create(`Logged out`);
+    this.purge();
     ROOMS.purge();
   }
 
@@ -77,6 +79,32 @@ class UserManager {
     Popup.create(`Signed up. Please log in to continue.`);
     $id('SignupUsername').value = '';
     $id('SignupEmail').value = '';
+  }
+
+  createAccountSection() {
+    let compiler = new ShpCompiler();
+    let userData = this.get();
+    let content = compiler.compile(`
+      $div[.TextContent] {
+        $span {Your account details}
+        $div[.Pair] {
+          $div[.Key] {Username}
+          $div[.Value] {${userData.username}}
+        }
+        $div[.Pair] {
+          $div[.Key] {E-mail}
+          $div[.Value] {${userData.email}}
+        }
+        $div[.Pair] {
+          $div[.Key] {Account created}
+          $div[.Value] {${new Date(userData.joined).toLocaleString()}}
+        }
+      }
+    `)[0];
+    $id('SectionAccount').appendChild(content);
+  }
+  purge() {
+    $empty($id('SectionAccount'));
   }
 
 }
